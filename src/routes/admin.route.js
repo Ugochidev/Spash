@@ -7,7 +7,6 @@ const {
   verifyEmail,
   loginAdmin,
   getAllUsers,
-  isBlocked,
   countUsers,
 } = require("../controllers/admin.controller");
 //  creating a route

@@ -8,9 +8,9 @@ const connectDB = require("./DBconnect/database");
 connectDB;
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/test", (req, res) => {
-  res.json({ message: "testing endpoints" });
-});
+// app.get("/test", (req, res) => {
+//   res.json({ message: "testing endpoints" });
+// });
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`server listening on ${PORT}`);
