@@ -3,13 +3,9 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const reservationSchema = new Schema(
   {
-    destination: {
-      type: String,
-      required: true,
-    },
     reservation: {
       type: String,
-      enum: ["economy", "business", "firstclass"],
+      enum: ["studioAppartment", "twobedAppartment", "other"],
       required: true,
     },
     time: {
