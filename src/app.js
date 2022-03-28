@@ -4,6 +4,7 @@ const User = require("./models/user.model");
 const app = express();
 app.use(express.json());
 const connectDB = require("./DBconnect/database");
+
 connectDB;
 app.use(express.urlencoded({ extended: true }));
 

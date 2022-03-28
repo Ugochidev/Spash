@@ -11,7 +11,6 @@ const { sendMail } = require("../DBconnect/sendMail");
 const {
   validateRegister,
   validateLogin,
-  isblocked,
 } = require("../middleware/validiate.middleware");
 
 //  creating  Admin
@@ -72,9 +71,6 @@ const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.query;
     const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
-    const admin = await Admin.findOne({ email: decodedToken.email }).select(
-      "isVerfied"
-    );
     if (admin.isVerified) {
       return successResMsg(res, 200, {
         message: "admin verified already",
@@ -138,30 +134,6 @@ const getAllUsers = async (req, res, next) => {
       message: "Get Users sucessfully", getUsers
     });
   } catch (error) {
-    return errorResMsg(res, 500, { message: error.message });
-  }
-};
-//   blocking a user
-const isBlocked = async (req, res, next) => {
-  try {
-    if (
-      req.body.firstName ||
-      req.body.lastName ||
-      req.body.phoneNumber ||
-      req.body.email ||
-      req.body.password
-    ) {
-     return next(
-         new AppError("Only blocked property can be modified", 401)
-       );
-    }
-    const { email } = req.query;
-    const result = await isblocked.validateAsync(req.query);
-    const blockUser = await User.findOneAndUpdate({ email }, req.body, {
-      new: true,
-    });
-    return successResMsg(res, 200, blockUser);
- } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
