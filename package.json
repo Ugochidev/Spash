@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "node ./src/app.js",
+    "dev": "nodemon ./src/app.js",
+    "test": "jest",
+    "test-watch": "jest --watchAll"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "dependencies": {
     "cookie-session": "^2.0.0",
     "dotenv": "^16.0.0",
