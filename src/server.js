@@ -9,6 +9,7 @@ const keys = require("./utils/keys");
 const { app } = require("./app");
 const dotenv = require("dotenv");
 dotenv.config();
+const UsersRouter = require("./routes/user.route.js");
 
 app.get("/", (req, res) => {
   res.render("home", { user: req.user });
@@ -29,5 +30,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // set up routes
+app.use("/api/v1", UsersRouter);
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
