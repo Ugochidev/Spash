@@ -14,7 +14,6 @@ router.post("/createAdmin", createAdmin);
 router.post("/verifyemail", verifyEmail);
 router.post("/loginAdmin", loginAdmin);
 router.get("/getAllUsers", authenticate, authorize, getAllUsers);
-router.patch("/block", authenticate, authorize, isBlocked);
 router.get("/countUsers", authenticate, authorize, countUsers);
 
 //    exporting modules

@@ -1,10 +1,20 @@
-const Booking = require("../models/booking.model")
-const axios = require("axios")
+const Booking = require("../models/booking.model");
+const axios = require("axios");
+const dotenv = require("dotenv");
+dotenv.config();
 
 const bookShortlets = async (req, res, next) => {
   try {
-    const {reservation, time, date } = req.body;
-    if (!reservation || !time || !date)
+    const { reservation, time, totalAmount, amountPerDay, noOfDays, date } =
+      req.body;
+    if (
+      !reservation ||
+      !time ||
+      !totalAmount ||
+      !amountPerDay ||
+      !noOfDays ||
+      !date
+    )
       return res.status(400).json({
         message: "please fill the required fields",
       });
@@ -12,6 +22,9 @@ const bookShortlets = async (req, res, next) => {
     const bookings = new Booking({
       reservation,
       time,
+      totalAmount,
+      amountPerDay,
+      noOfDays,
       date,
     });
     return res.status(201).json({
@@ -29,14 +42,13 @@ const bookingPayment = async (req, res, next) => {
       url: "https://api.paystack.co/transaction/initialize",
       method: "post",
       headers: {
-        Authorization: `Bearer ${process.env.payStack_secret_key}`,
+        Authorization: `Bearer ${process.env.paystack-Secret}`,
       },
       data: {
         email: "ugochukwuchioma16@gmail.com",
-        amount: "4000",
+        amount: "80000000",
       },
     });
-    console.log(data);
     return res.status(200).json({
       data: data.data.data,
     });
@@ -52,11 +64,11 @@ const paymentVerification = async (req, res, next) => {
       url: `https://api.paystack.co/transaction/verify/${reference}`,
       method: "get",
       headers: {
-        Authorization: `Bearer ${process.env.payStack_secret_key}`,
+        Authorization: `Bearer ${process.env.paystack-Secret}`,
       },
       data: {
         email: "ugochukwuchioma16@gmail.com",
-        amount: "4000",
+        amount: "80000000",
       },
     });
     console.log(data);
@@ -66,4 +78,5 @@ const paymentVerification = async (req, res, next) => {
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
-}
+};
+module.exports = { bookShortlets, bookingPayment, paymentVerification };
