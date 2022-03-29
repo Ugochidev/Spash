@@ -6,9 +6,9 @@ const profileRoutes = require("./routes/profile-routes");
 const passportSetup = require("./utils/passport-setup");
 const mongoose = require("mongoose");
 const keys = require("./utils/keys");
-const { app }= require("./app")
+const { app } = require("./app");
 const dotenv = require("dotenv");
- dotenv.config();
+dotenv.config();
 
 app.get("/", (req, res) => {
   res.render("home", { user: req.user });
@@ -27,11 +27,6 @@ app.use(
 // initialize passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-// // connect to mongodb
-// mongoose.connect(keys.mongodb.dbURI, () => {
-//   console.log("connected to mongodb");
-// });
 
 // set up routes
 app.use("/auth", authRoutes);

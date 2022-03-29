@@ -6,7 +6,6 @@ const {
   createUser,
   verifyEmail,
   loginUser,
-  retrieveUser,
   forgetPasswordLink,
   changePassword,
   resetPassword,
@@ -15,7 +14,6 @@ const {
 router.post("/createUser", createUser);
 router.post("/verifyemail", verifyEmail);
 router.post("/loginUser", loginUser);
-router.get("/retrieveUser", authenticate, retrieveUser);
 router.post("/forgetPasswordLink", forgetPasswordLink);
 router.post("/ forgetPassword", changePassword);
 router.post("/resetPassword", resetPassword);

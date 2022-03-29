@@ -1,5 +1,7 @@
-const Reservation = ("../models/reservation.model")
-exports.uploadReservation = async (req, res, next) => {
+const Booking = require("../models/booking.model")
+const axios = require("axios")
+
+const bookShortlets = async (req, res, next) => {
   try {
     const {reservation, time, date } = req.body;
     if (!reservation || !time || !date)
@@ -7,13 +9,13 @@ exports.uploadReservation = async (req, res, next) => {
         message: "please fill the required fields",
       });
 
-    const uploads = new Reservation({
+    const bookings = new Booking({
       reservation,
       time,
       date,
     });
     return res.status(201).json({
-      uploads,
+      bookings,
     });
   } catch (error) {
     return res.status(500).json({
@@ -21,10 +23,8 @@ exports.uploadReservation = async (req, res, next) => {
     });
   }
 };
-exports.payment = async (req, res, next) => {
+const bookingPayment = async (req, res, next) => {
   try {
-    console.log("here...........................");
-    console.log(process.env.payStack_secret_key);
     const data = await axios({
       url: "https://api.paystack.co/transaction/initialize",
       method: "post",
@@ -41,16 +41,13 @@ exports.payment = async (req, res, next) => {
       data: data.data.data,
     });
   } catch (error) {
-    console.log(error);
-    message: error;
+    message: error.message;
   }
 };
 
-exports.paymentVerification = async (req, res, next) => {
+const paymentVerification = async (req, res, next) => {
   try {
-    const { reference } = req.query;
-    console.log("here...........................");
-    console.log(process.env.payStack_secret_key);
+    const { reference } = req.headers;
     const data = await axios({
       url: `https://api.paystack.co/transaction/verify/${reference}`,
       method: "get",
