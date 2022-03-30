@@ -126,32 +126,10 @@ const loginAdmin = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-//  getting all Users
-const getAllUsers = async (req, res, next) => {
-  try {
-    const getUsers = await User.find();
-    return successResMsg(res, 200, {
-      message: "Get Users sucessfully", getUsers
-    });
-  } catch (error) {
-    return errorResMsg(res, 500, { message: error.message });
-  }
-};
-//  counting all registered user
-const countUsers = async (req, res, next) => {
-  try {
-    const usercount = await User.countDocuments();
-   return successResMsg(res, 200, blockUser)
- } catch (error) {
-    return errorResMsg(res, 500, { message: error.message });
-  }
-};
 
 //  exporting module
 module.exports = {
   createAdmin,
   verifyEmail,
-  loginAdmin,
-  getAllUsers,
-  countUsers,
+  loginAdmin
 };

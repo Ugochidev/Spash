@@ -18,7 +18,7 @@ const bookShortlets = async (req, res, next) => {
       });
 
       let result = noOfNights * amountPerDay;
-    const bookings = new Booking({
+    const bookings = await Booking.create({
       reservation,
       time,
       totalAmount: result,
@@ -26,7 +26,6 @@ const bookShortlets = async (req, res, next) => {
       noOfNights,
       date,
     });
-    await bookings.save()
     return res.status(201).json({
       bookings,
     });

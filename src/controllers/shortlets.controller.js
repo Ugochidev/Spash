@@ -35,4 +35,29 @@ const uploadShortlets = async (req, res, next) => {
   }
 }
 
-module.exports = { uploadShortlets};
+//   fetch all available shortlets
+const  fetchAllShortlets = async (req, res, next) => {
+  try {
+    const fetchShortlets = await Shortlets.find();
+    return successResMsg(res, 200, {
+      message: "fetch all available shortlets sucessfully",
+      fetchShortlets,
+    });
+  } catch (error) {
+    return errorResMsg(res, 500, { message: error.message });
+  }
+};
+
+
+//   Fetch number of all available shortlets
+const countShortlets = async (req, res, next) => {
+  try {
+    const numberShortlets = await Shortlets.countDocuments();
+    return successResMsg(res, 200, {
+      message: "number of all available shortlets"
+    });
+  } catch (error) {
+    return errorResMsg(res, 500, { message: error.message });
+  }
+};
+module.exports = { uploadShortlets, fetchAllShortlets, countShortlets };
