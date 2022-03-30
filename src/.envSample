@@ -1,0 +1,15 @@
+PORT = ####
+DATABASE_URL= ######
+SECRET_TOKEN = #####
+
+userEmail =  #####
+userPassword = #####
+
+clientID=#####
+clientSecret=#####
+cookieKey=#####
+
+paystack_Secret = #####
+CLOUDINARY_NAME = #####
+CLOUDINARY_API_KEY = #####
+CLOUDINARY_API_SECRET =#####

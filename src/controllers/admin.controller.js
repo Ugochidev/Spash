@@ -7,7 +7,7 @@ const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const { sendMail } = require("../DBconnect/sendMail");
+const { sendMail } = require("../utils/sendMail");
 const {
   validateRegister,
   validateLogin,
