@@ -153,6 +153,5 @@ module.exports = {
   verifyEmail,
   loginAdmin,
   getAllUsers,
-  isBlocked,
   countUsers,
 };

@@ -32,11 +32,11 @@ const shortletsSchema = new Schema(
       required: true,
       trim: true,
     },
-    image: {
-      type: [String],
-      required: true,
-      trim: true,
-    },
+    // image: {
+    //   type: [String],
+    //   required: true,
+    //   trim: true,
+    // },
   },
   {
     timestamps: true,

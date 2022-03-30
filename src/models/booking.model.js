@@ -13,7 +13,7 @@ const bookingSchema = new Schema(
       enum: ["morning", "afternoon", "evening"],
       required: true,
     },
-    noOfDays: {
+    noOfNights: {
       type: Number,
       required: true,
     },
