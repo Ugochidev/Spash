@@ -33,42 +33,41 @@ const uploadShortlets = async (req, res, next) => {
       message: error.message,
     });
   }
-}
+};
 
 //   fetch all available shortlets
 
-const  fetchAllShortlets = async (req, res, next) => {
+const fetchAllShortlets = async (req, res, next) => {
   try {
-        const { page, limit } = req.headers;
-        if (limit === null || page === null) {
-          limit = 10;
-          page = 1;
-        }
-        const allShortlets = await Shortlets.find()
-          .limit(limit * 1)
-          .skip((page - 1) * limit)
-          .sort({ apartmentName : -1 })
-          .exec();
-        const count = await Shortlets.countDocuments();
-        return successResMsg(res, 200, {
-          message: "Shortlets fetch successfully",
-          allShortlets,
-          total: allShortlets.length,
-          totalPages: Math.ceil(count / limit),
-          currentPage: page,
-        });
+    const { page, limit } = req.headers;
+    if (limit === null || page === null) {
+      limit = 10;
+      page = 1;
+    }
+    const allShortlets = await Shortlets.find()
+      .limit(limit * 1)
+      .skip((page - 1) * limit)
+      .sort({ apartmentName: -1 })
+      .exec();
+    const count = await Shortlets.countDocuments();
+    return successResMsg(res, 200, {
+      message: "Shortlets fetch successfully",
+      allShortlets,
+      total: allShortlets.length,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page,
+    });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-
 
 //   Fetch number of all available shortlets
 const countShortlets = async (req, res, next) => {
   try {
     const numberShortlets = await Shortlets.countDocuments();
     return successResMsg(res, 200, {
-      message: "number of all available shortlets"
+      message: "number of all available shortlets",
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -80,9 +79,7 @@ const countShortlets = async (req, res, next) => {
 const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.headers;
-    const apartmentByState = await User.find({ state }).select(
-      "apartmentName"
-    );
+    const apartmentByState = await User.find({ state });
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
       apartmentByState,
@@ -90,8 +87,7 @@ const fetchApartment = async (req, res, next) => {
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
-}; 
-
+};
 
 module.exports = {
   uploadShortlets,
