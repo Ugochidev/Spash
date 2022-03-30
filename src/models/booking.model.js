@@ -3,6 +3,18 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const bookingSchema = new Schema(
   {
+    user: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    shortlets: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Shortlets",
+      },
+    ],
     reservation: {
       type: String,
       enum: ["studioAppartment", "twobedAppartment", "others"],

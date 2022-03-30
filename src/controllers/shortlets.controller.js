@@ -60,4 +60,23 @@ const countShortlets = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
+
+//  fetch apartment by State
+
+const fetchApartment = async (req, res, next) => {
+  try {
+    const { state } = req.headers;
+    const apartmentByState = await User.find({ state }).select(
+      "apartmentName"
+    );
+    return successResMsg(res, 200, {
+      message: "fetched apartment by State sucessfully",
+      apartmentByState,
+    });
+  } catch (error) {
+    return errorResMsg(res, 500, { message: error.message });
+  }
+}; 
+
+
 module.exports = { uploadShortlets, fetchAllShortlets, countShortlets };
