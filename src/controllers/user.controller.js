@@ -63,7 +63,7 @@ const createUser = async (req, res, next) => {
 
 const verifyEmail = async (req, res, next) => {
   try {
-    const { token } = req.query;
+    const { token } = req.headers;
     const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
     const user = await User.findOne({ email: decodedToken.email }).select(
       "isVerified"

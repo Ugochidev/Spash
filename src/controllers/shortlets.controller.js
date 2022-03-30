@@ -36,13 +36,27 @@ const uploadShortlets = async (req, res, next) => {
 }
 
 //   fetch all available shortlets
+
 const  fetchAllShortlets = async (req, res, next) => {
   try {
-    const fetchShortlets = await Shortlets.find();
-    return successResMsg(res, 200, {
-      message: "fetch all available shortlets sucessfully",
-      fetchShortlets,
-    });
+        const { page, limit } = req.headers;
+        if (limit === null || page === null) {
+          limit = 10;
+          page = 1;
+        }
+        const allShortlets = await Shortlets.find()
+          .limit(limit * 1)
+          .skip((page - 1) * limit)
+          .sort({ apartmentName : -1 })
+          .exec();
+        const count = await Shortlets.countDocuments();
+        return successResMsg(res, 200, {
+          message: "Shortlets fetch successfully",
+          allShortlets,
+          total: allShortlets.length,
+          totalPages: Math.ceil(count / limit),
+          currentPage: page,
+        });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
@@ -79,4 +93,9 @@ const fetchApartment = async (req, res, next) => {
 }; 
 
 
-module.exports = { uploadShortlets, fetchAllShortlets, countShortlets };
+module.exports = {
+  uploadShortlets,
+  fetchAllShortlets,
+  countShortlets,
+  fetchApartment,
+};
