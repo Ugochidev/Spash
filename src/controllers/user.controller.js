@@ -1,5 +1,5 @@
 //  Require dependencies
-const User = require("../models/user.model");
+const User = require("../models/user.model.sql");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
@@ -9,14 +9,12 @@ const { sendMail } = require("../utils/sendMail");
 const {
   validiateUser,
   UserLogin,
-  validPhoneNumber,
 } = require("../middleware/validiate.middleware");
 
 //  creating  a user
 const createUser = async (req, res, next) => {
   try {
-    const { firstName, lastName, phoneNumber, email, password} =
-      req.body;
+    const { firstName, lastName, phoneNumber, email, password } = req.body;
     const registerUser = await validiateUser.validateAsync(req.body);
     const phoneNumberExist = await User.findOne({ phoneNumber });
     if (phoneNumberExist) {
@@ -99,7 +97,7 @@ const loginUser = async (req, res, next) => {
       return next(new AppError("Invalid password", 400));
     }
     if (!emailExist.isVerified) {
-       return next(new AppError("User not Verified", 401));
+      return next(new AppError("User not Verified", 401));
     }
     const data = {
       id: phoneNumberExist._id,
@@ -124,7 +122,7 @@ const forgetPasswordLink = async (req, res, next) => {
     const { email } = req.body;
     const userEmail = await User.findOne({ email });
     if (!userEmail) {
-     return next(new AppError("email not found", 404));
+      return next(new AppError("email not found", 404));
     }
     const data = {
       id: userEmail._id,
@@ -140,8 +138,8 @@ const forgetPasswordLink = async (req, res, next) => {
       text: `Hi ${userEmail.firstName}, Reset your password with the link below.${token}`,
     };
     await sendMail(mailOptions);
-     return successResMsg(res, 200, {
-        message: `Hi ${userEmail.firstName},reset password.`,
+    return successResMsg(res, 200, {
+      message: `Hi ${userEmail.firstName},reset password.`,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -155,7 +153,7 @@ const changePassword = async (req, res, next) => {
     const secret_key = process.env.SECRET_TOKEN;
     const decoded_token = await jwt.verify(token, secret_key);
     if (decoded_token.email !== email) {
-     return next(new AppError("Email do not match.", 404));
+      return next(new AppError("Email do not match.", 404));
     }
     if (newPassword !== confirmPassword) {
       return next(new AppError("Password do not match.", 404));
@@ -168,11 +166,11 @@ const changePassword = async (req, res, next) => {
         new: true,
       }
     );
-   return successResMsg(res, 200, {
-        message:`Password has been updated successfully.`,
+    return successResMsg(res, 200, {
+      message: `Password has been updated successfully.`,
     });
   } catch (error) {
-     return errorResMsg(res, 500, { message: error.message });
+    return errorResMsg(res, 500, { message: error.message });
   }
 };
 
@@ -185,15 +183,15 @@ const resetPassword = async (req, res, next) => {
       req.headers.authorization.split(" ")[1],
       process.env.SECRET_TOKEN
     ).email;
-    if(headerTokenEmail !== loggedUser.email ){
-     return next(new AppError("Forbidden", 404));
+    if (headerTokenEmail !== loggedUser.email) {
+      return next(new AppError("Forbidden", 404));
     }
     const passwordMatch = await bcrypt.compare(
       oldPassword,
       loggedUser.password
     );
     if (!passwordMatch) {
-     return next(new AppError("old Password is not correct.", 404));
+      return next(new AppError("old Password is not correct.", 404));
     }
     if (newPassword !== confirmPassword) {
       return next(new AppError("Password do not match.", 400));
@@ -204,10 +202,10 @@ const resetPassword = async (req, res, next) => {
       { password: hashPassword }
     );
     return successResMsg(res, 200, {
-        message:`Password has been updated successfully.`,
+      message: `Password has been updated successfully.`,
     });
   } catch (error) {
-   return errorResMsg(res, 500, { message: error.message });
+    return errorResMsg(res, 500, { message: error.message });
   }
 };
 

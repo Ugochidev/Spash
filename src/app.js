@@ -4,7 +4,10 @@ const User = require("./models/user.model");
 const app = express();
 app.use(express.json());
 const connectDB = require("./DBconnect/database");
+const connection = require("./DBconnect/connectMysql")
 
+
+connection;
 connectDB;
 app.use(express.urlencoded({ extended: true }));
 
