@@ -1,7 +1,6 @@
 //  Require dependencies
 
 const Admin = require("../models/admin.model");
-const User = require("../models/user.model");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");

@@ -1,5 +1,5 @@
 //  Require dependencies
-const User = require("../models/user.model.sql");
+// const User = require("../models/user.model.sql");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");

@@ -4,8 +4,7 @@ const User = require("./models/user.model");
 const app = express();
 app.use(express.json());
 const connectDB = require("./DBconnect/database");
-const connection = require("./DBconnect/connectMysql")
-
+const connection = require("./DBconnect/connectMysql");
 
 connection;
 connectDB;
@@ -55,32 +54,6 @@ app.post("/loginAdmin", async (req, res) => {
   res.status(200).json("login successfully");
 });
 module.exports = { app };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // // app.js
 
