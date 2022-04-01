@@ -1,5 +1,5 @@
 //  Require dependencies
-// const User = require("../models/user.model.sql");
+const User = require("../models/user.model");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
@@ -10,33 +10,40 @@ const {
   validiateUser,
   UserLogin,
 } = require("../middleware/validiate.middleware");
+const db = require("../DBconnect/connectMysql");
 
 //  creating  a user
 const createUser = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
-    const registerUser = await validiateUser.validateAsync(req.body);
-    const phoneNumberExist = await User.findOne({ phoneNumber });
-    if (phoneNumberExist) {
-      return next(new AppError("PhoneNumber already exist please login", 400));
-    }
-    // validating email
-    const emailExist = await User.findOne({ email });
-    if (emailExist) {
-      return next(new AppError("email exists, please login", 400));
-    }
+    // const registerUser = await validiateUser.validateAsync(req.body);
+    // const phoneNumberExist = new User({ phoneNumber });
+    // if (phoneNumberExist) {
+    //   return next(new AppError("PhoneNumber already exist please login", 400));
+    // }
+    // // validating email
+    // const emailExist = await User.findOne({ email });
+    // if (emailExist) {
+    //   return next(new AppError("email exists, please login", 400));
+    // }
     //  hashing password
     const hashPassword = await bcrypt.hash(password, 10);
+
+    // let userDetails = {
+    //   firstName: user.firstName,
+    //   lastName: user.lastName,
+    //   email: user.email,
+    //   phoneNumber: uphoneNumber,
+    //   password:password,
+    //   isVerified:isVerified,
+    //   role:role,
+    // };
     // creating a new user
-    const newUser = await User.create({
-      firstName,
-      lastName,
-      phoneNumber,
-      email,
-      password: hashPassword,
-    });
+    const newUser = await db.execute(
+      "INSERT INTO users (firstName, lastName,  email, phoneNumber, password) VALUES ( ?, ?, ?, ?, ?)",
+      [firstName, lastName, email, phoneNumber, hashPassword]
+    );
     const data = {
-      id: newUser._id,
       email: newUser.email,
       role: newUser.role,
     };
@@ -63,10 +70,12 @@ const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.headers;
     const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
-    const user = await User.findOne({ email: decodedToken.email }).select(
-      "isVerified"
-    );
-    if (user.isVerified) {
+    // const user = await User.findOne({ email: decodedToken.email }).select(
+    //   "isVerified"
+    // );
+    const user = await db.execute("SELECT * FROM users WHERE email = ?", []);
+    const founduser = users[0].find((user) => user.email === email);
+    if (founduser) {
       return successResMsg(res, 200, {
         message: "user verified already",
       });

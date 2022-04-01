@@ -1,6 +1,7 @@
 const Joi = require("joi");
 
 const validateRegister = Joi.object({
+  id: Joi.number().required(),
   firstName: Joi.string().min(3).max(20).required(),
   lastName: Joi.string().min(3).max(20).required(),
   phoneNumber: Joi.string().min(10).max(13).required(),
@@ -49,10 +50,10 @@ const UserLogin = Joi.object({
     .min(8)
     .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
     .required(),
-});const validPhoneNumber = Joi.object({
+});
+const validPhoneNumber = Joi.object({
   phoneNumber: Joi.string().min(10).max(13).required(),
 });
-
 
 module.exports = {
   validateRegister,

@@ -12,7 +12,7 @@ dotenv.config();
 const userRouter = require("./routes/user.route.js");
 const adminRouter = require("./routes/admin.route");
 const bookingRouter = require("./routes/booking.route");
-const image = require("./routes/image.route")
+const image = require("./routes/image.route");
 
 app.get("/", (req, res) => {
   res.render("home", { user: req.user });
@@ -39,73 +39,7 @@ app.use("/api/v1", bookingRouter);
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // app.use("/api/v1", image);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // const http = require("http");
 // const app = require("./app");

@@ -1,4 +1,3 @@
-
 const User = require("../models/user.model.sql");
 const db = require("../DBconnect/connectMysql");
 const appError = require("../utils/appError");
@@ -45,7 +44,7 @@ const userServices = {
       }
       return newUser;
     } catch (error) {
-      return new customError(500, "Server Error");
+      return 500, error.message;
     }
   },
 
