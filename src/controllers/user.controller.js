@@ -73,9 +73,12 @@ const verifyEmail = async (req, res, next) => {
     // const user = await User.findOne({ email: decodedToken.email }).select(
     //   "isVerified"
     // );
-    const user = await db.execute("SELECT * FROM users WHERE email = ?", []);
-    const founduser = users[0].find((user) => user.email === email);
-    if (founduser) {
+    const user = await db.execute("SELECT * FROM users WHERE email = ?", [
+      {
+        email: decodedToken.email,
+      },
+    ]);
+    if (user) {
       return successResMsg(res, 200, {
         message: "user verified already",
       });
@@ -90,22 +93,34 @@ const verifyEmail = async (req, res, next) => {
 // logging in a user
 const loginUser = async (req, res, next) => {
   try {
+    const users = await db.execute("SELECT * FROM users");
     const { phoneNumber, password } = req.body;
+    const foundUser = await db.execute(
+      "SELECT * FROM users WHERE  password = ?",
+      [password == password]
+    );
+    if (!foundUser) {
+      return new AppError("PhoneNumber does not exist please sign-up", 400);
+    }
     const loginUser = await UserLogin.validateAsync(req.body);
-    const phoneNumberExist = await User.findOne({ phoneNumber });
+    const phoneNumberExist = await db.execute(
+      "SELECT * FROM users WHERE  phoneNumber = ?",
+      [phoneNumber == phoneNumber]
+    );
+    // const phoneNumberExist = await User.findOne({ phoneNumber });
     if (!phoneNumberExist) {
       return next(
         new AppError("PhoneNumber does not exist please sign-up", 400)
       );
     }
-    let isPasswordExist = await bcrypt.compare(
-      password,
-      phoneNumberExist.password
-    );
-    if (!isPasswordExist) {
-      return next(new AppError("Invalid password", 400));
-    }
-    if (!emailExist.isVerified) {
+    // let isPasswordExist = await bcrypt.compare(
+    //   "SELECT password FROM users WHERE  = ?",
+    //   password == foundUser.password
+    // );
+    // if (!isPasswordExist) {
+    //   return next(new AppError("Invalid password", 400));
+    // }
+    if (phoneNumberExist.password) {
       return next(new AppError("User not Verified", 401));
     }
     const data = {
