@@ -16,7 +16,7 @@ const db = require("../DBconnect/connectMysql");
 const createUser = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
-    // const registerUser = await validiateUser.validateAsync(req.body);
+    const registerUser = await validiateUser.validateAsync(req.body);
     // const phoneNumberExist = new User({ phoneNumber });
     // if (phoneNumberExist) {
     //   return next(new AppError("PhoneNumber already exist please login", 400));
@@ -93,33 +93,45 @@ const verifyEmail = async (req, res, next) => {
 // logging in a user
 const loginUser = async (req, res, next) => {
   try {
-    const users = await db.execute("SELECT * FROM users");
+    // const users = await db.execute("SELECT * FROM users");
     const { phoneNumber, password } = req.body;
-    const foundUser = await db.execute(
-      "SELECT * FROM users WHERE  password = ?",
-      [password == password]
-    );
-    if (!foundUser) {
-      return new AppError("PhoneNumber does not exist please sign-up", 400);
-    }
+    // const foundUser = await db.execute(
+    //   "SELECT * FROM users WHERE  password = ?",
+    //   [password == password]
+    // );
+    // if (!foundUser) {
+    //   return new AppError("PhoneNumber does not exist please sign-up", 400);
+    // }
     const loginUser = await UserLogin.validateAsync(req.body);
+    // const phoneNumberExist = await db.execute(
+    //   "SELECT * FROM users WHERE  phoneNumber = ?",
+    //   [phoneNumber == phoneNumber]
+    // );
+
+    // const foundUser = await db.execute(
+    //   "SELECT * FROM users WHERE phoneNumber = ? AND password = ?",
+    //   [phoneNumber, password]
+    // );
+    //   if (!foundUser) {
+    // return new AppError("PhoneNumber does not exist please sign-up", 400);
+    // }
     const phoneNumberExist = await db.execute(
-      "SELECT * FROM users WHERE  phoneNumber = ?",
-      [phoneNumber == phoneNumber]
+      "SELECT phoneNumber FROM users WHERE phoneNumber = ?  AND password = ?",
+      [phoneNumber, password]
     );
-    // const phoneNumberExist = await User.findOne({ phoneNumber });
     if (!phoneNumberExist) {
       return next(
         new AppError("PhoneNumber does not exist please sign-up", 400)
       );
     }
-    // let isPasswordExist = await bcrypt.compare(
-    //   "SELECT password FROM users WHERE  = ?",
-    //   password == foundUser.password
-    // );
-    // if (!isPasswordExist) {
-    //   return next(new AppError("Invalid password", 400));
-    // }
+    const hashPassword = bcrypt.compareSync()
+    let isPasswordExist = await bcrypt.compare(
+      "SELECT * FROM users WHERE password = ? hashedPassword = ?",
+      [password, hashedPassword]
+    );
+    if (!isPasswordExist) {
+      return next(new AppError("Invalid password", 400));
+    }
     if (phoneNumberExist.password) {
       return next(new AppError("User not Verified", 401));
     }

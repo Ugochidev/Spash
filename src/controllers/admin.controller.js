@@ -11,36 +11,37 @@ const {
   validateRegister,
   validateLogin,
 } = require("../middleware/validiate.middleware");
+const db = require("../DBconnect/connectPGsql");
 
 //  creating  Admin
 const createAdmin = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
     const result = await validateRegister.validateAsync(req.body);
-
-    // validating phoneNumber
-    const phoneNumberExist = await Admin.findOne({ phoneNumber });
-    if (phoneNumberExist) {
-      return next(new AppError("PhoneNumber already exist please login", 400));
-    }
-    // validating email
-    const emailExist = await Admin.findOne({ email });
-    if (emailExist) {
-      return next(new AppError("email exists, please login", 400));
-    }
-    // hashing password
     const hashPassword = await bcrypt.hash(password, 10);
+    // // validating phoneNumber
+    // const phoneNumberExist = await db.query(
+    //   "SELECT * FROM admin WHERE  phoneNumber = ?",
+    //   [phoneNumber == phoneNumber]
+    // );
+    // if (phoneNumberExist) {
+    //   return next(new AppError("PhoneNumber already exist please login", 400));
+    // // }
+    // console.log("phoneNumberExist");
+    // // validating email
+    // const emailExist = await db.query("SELECT * FROM admin WHERE  email = ?", [
+    //   email === email,
+    // ]);
+    // if (emailExist) {
+    //   return next(new AppError("email exists, please login", 400));
+    // }
 
-    // create  a new Admin
-    const newAdmin = await Admin.create({
-      firstName,
-      lastName,
-      phoneNumber,
-      email,
-      password: hashPassword,
-    });
+    const newAdmin = await db.query(
+      "INSERT INTO admin (firstName, lastName, phoneNumber, email, password) VALUES ($1, $2, $3, $4, $5)",
+      [firstName, lastName, phoneNumber, email, hashPassword]
+    );
     const data = {
-      id: newAdmin_id,
+      id: newAdmin.id,
       email: newAdmin.email,
       role: newAdmin.role,
     };
@@ -58,6 +59,7 @@ const createAdmin = async (req, res, next) => {
     return successResMsg(res, 201, {
       message: "Admin  created",
       newAdmin,
+      token,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -70,10 +72,14 @@ const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.headers;
     const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
-    const admin = await Admin.findOne({ email: decodedToken.email }).select(
-      "isVerified"
-    );
-
+    // const admin = await Admin.findOne({ email: decodedToken.email }).select(
+    //   "isVerified"
+    // );
+    const admin = await db.execute("SELECT * FROM admin WHERE email = ?", [
+      {
+        email: decodedToken.email,
+      },
+    ]);
     if (admin.isVerified) {
       return successResMsg(res, 200, {
         message: "admin verified already",

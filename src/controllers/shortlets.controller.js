@@ -1,4 +1,10 @@
 const Shortlets = require("../models/shortlets.model");
+const ApartmentPicture = require("../models/apartment.model");
+const cloudinaryUploadMethod = require("../cloudinary");
+const path = require("path");
+const express = require("express");
+const router = express.Router();
+const upload = require("../multer");
 
 const uploadShortlets = async (req, res, next) => {
   try {
@@ -89,9 +95,38 @@ const fetchApartment = async (req, res, next) => {
   }
 };
 
+router.post("/image", upload.array("pictures", 24), async (req, res) => {
+  try {
+    let pictureFiles = req.files;
+
+    const urls = [];
+    const files = req.files;
+    if (!files)
+      return res.status(400).json({ message: "No picture attached!" });
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await cloudinaryUploadMethod(path);
+      console.log(newPath);
+      urls.push(newPath);
+    }
+    images = urls.map((url) => url.res);
+    const newHousePics = new ApartmentPicture({
+      imageResponses: images,
+    });
+    res.status(200).json({
+      imageResponses: images,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+});
+
 module.exports = {
   uploadShortlets,
   fetchAllShortlets,
   countShortlets,
   fetchApartment,
+  router,
 };

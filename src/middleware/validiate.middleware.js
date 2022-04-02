@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const validateRegister = Joi.object({
-  id: Joi.number().required(),
+  id: Joi.number(),
   firstName: Joi.string().min(3).max(20).required(),
   lastName: Joi.string().min(3).max(20).required(),
   phoneNumber: Joi.string().min(10).max(13).required(),
