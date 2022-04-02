@@ -40,4 +40,3 @@ app.use("/api/v1", adminRouter);
 app.use("/api/v1", bookingRouter);
 app.use("/auth", authRoutes);
 app.use("/profile", profileRoutes);
-
