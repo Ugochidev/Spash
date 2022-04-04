@@ -16,12 +16,14 @@ const db = require("../DBconnect/connectMysql");
 const createUser = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
+    // validating reg.body with joi
     const registerUser = await validiateUser.validateAsync(req.body);
+const [row]
     //  hashing password
     const hashPassword = await bcrypt.hash(password, 10);
 
     // creating a new user
-    const newUser = await db.execute(
+    const [newUser] = await db.execute(
       "INSERT INTO users (firstName, lastName,  email, phoneNumber, password) VALUES ( ?, ?, ?, ?, ?)",
       [firstName, lastName, email, phoneNumber, hashPassword]
     );
@@ -29,14 +31,14 @@ const createUser = async (req, res, next) => {
       email: newUser.email,
       role: newUser.role,
     };
-    const url = "theolamideolanrewaju.com";
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "2h",
     });
+    //  verifying email address with nodemailer
     let mailOptions = {
       to: newUser.email,
       subject: "Verify Email",
-      text: `Hi ${firstName}, Pls verify your email. ${url}
+      text: `Hi ${firstName}, Pls verify your email.
        ${token}`,
     };
     await sendMail(mailOptions);
@@ -73,25 +75,10 @@ const verifyEmail = async (req, res, next) => {
 // logging in a user
 const loginUser = async (req, res, next) => {
   try {
-    // const users = await db.execute("SELECT * FROM users");
-    const { phoneNumber, password } = req.body;
-    // const foundUser = await db.execute(
-    //   "SELECT * FROM users WHERE  password = ?",
-    //   [password == password]
-    // );
-    // if (!foundUser) {
-    //   return new AppError("PhoneNumber does not exist please sign-up", 400);
-    // }
+    const { phoneNumber, password } = req.body; 
+    // validate with joi
     const loginUser = await UserLogin.validateAsync(req.body);
-    // const phoneNumberExist = await db.execute(
-    //   "SELECT * FROM users WHERE  phoneNumber = ?",
-    //   [phoneNumber == phoneNumber]
-    // );
-
-    // const foundUser = await db.execute(
-    //   "SELECT * FROM users WHERE phoneNumber = ? AND password = ?",
-    //   [phoneNumber, password]
-
+  
     const phoneNumberExist = await db.execute(
       "SELECT phoneNumber FROM users WHERE phoneNumber = password");
     if (!phoneNumberExist) {
@@ -100,15 +87,6 @@ const loginUser = async (req, res, next) => {
       );
     }
     
-    // const hashPassword = bcrypt.compareSync()
-    // let isPasswordExist = await bcrypt.compare(
-    //   "SELECT * FROM users WHERE password = ? user.password = ?",
-    //   [req.body.password, hashedPassword]
-    // );
-    // console.log("okl");
-    // if (!isPasswordExist) {
-    //   return next(new AppError("Invalid password", 400));
-    // }
     if (phoneNumberExist.password) {
       return next(new AppError("User not Verified", 401));
     }

@@ -1,28 +1,9 @@
-// const { Client } = require("pg");
-
-// const client = new Client({
-//   host: "localhost",
-//   user: "postgres",
-//   post: 5432,
-//   password: "ikefedeco2016",
-//   database: "SpashShortlets",
-// });
-// client.connect();
-
-// client.query("Select * from spash-shortlets2", (err, res) => {
-//   if (!err) {
-//     console.log("connected to pgsql");
-//   } else {
-//     console.log(err.message);
-//   }
-// });
-
 const { Pool } = require("pg");
 const dotenv = require("dotenv");
 
 dotenv.config();
 
-// ==> Conexão com a Base de Dados:
+// creating connection:
 const pool = new Pool({
   host: process.env.hostpg,
   user:process.env.userpg,
@@ -37,7 +18,6 @@ pool.query('SELECT NOW()', (err, res) => {
   } else {
     console.log(err.message);
   }
-  //   console.log("connected PGSQL");
 });
 
 module.exports = pool;

@@ -5,6 +5,12 @@ const path = require("path");
 const express = require("express");
 const router = express.Router();
 const upload = require("../multer");
+const db = require("../DBconnect/connectPGsql");
+const AppError = require("../utils/appError");
+const { successResMsg, errorResMsg } = require("../utils/response");
+const {validateshortlets} =require("../middleware/validiate.middleware")
+
+
 
 const uploadShortlets = async (req, res, next) => {
   try {
@@ -15,29 +21,27 @@ const uploadShortlets = async (req, res, next) => {
       address,
       amountPerNight,
       numberOfNights,
-    } = req.body;
-    if (
-      (!apartmentName || !state || !numberOfRooms || !address,
-      !amountPerNight || !numberOfNights)
-    )
-      return res.status(400).json({
-        message: "please fill the required fields",
-      });
-    const shortlets = await Shortlets.create({
-      apartmentName,
-      state,
-      numberOfRooms,
-      address,
-      amountPerNight,
-      numberOfNights,
-    });
-    return res.status(201).json({
-      shortlets,
+    } = req.body; 
+    // validating reg.body with joi
+ const validate = await validateshortlets.validateAsync(req.body);
+
+//  Uploading  Shortlets
+    const newShortlets = await db.query(
+      "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight, numberOfNights) VALUES ($1, $2, $3, $4, $5, $6)",
+      [
+        apartmentName,
+        state,
+        numberOfRooms,
+        address,
+        amountPerNight,
+        numberOfNights,
+      ]
+    );
+    return successResMsg(res, 201, {
+      message: "Shortlets  created",
     });
   } catch (error) {
-    return res.status(500).json({
-      message: error.message,
-    });
+    return errorResMsg(res, 500, { message: error.message });
   }
 };
 
@@ -50,18 +54,15 @@ const fetchAllShortlets = async (req, res, next) => {
       limit = 10;
       page = 1;
     }
-    const allShortlets = await Shortlets.find()
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .sort({ apartmentName: -1 })
-      .exec();
-    const count = await Shortlets.countDocuments();
+    // pagination
+    const allShortlets = await db.query(
+      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET (1 - 1) * 10"
+    ); 
+    const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "Shortlets fetch successfully",
+      count,
       allShortlets,
-      total: allShortlets.length,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -71,9 +72,10 @@ const fetchAllShortlets = async (req, res, next) => {
 //   Fetch number of all available shortlets
 const countShortlets = async (req, res, next) => {
   try {
-    const numberShortlets = await Shortlets.countDocuments();
+    const numberShortlets = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "number of all available shortlets",
+      numberShortlets,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -85,7 +87,9 @@ const countShortlets = async (req, res, next) => {
 const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.headers;
-    const apartmentByState = await User.find({ state });
+    const apartmentByState = await db.query(
+      "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
+    );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
       apartmentByState,
@@ -94,7 +98,7 @@ const fetchApartment = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-
+//  Uploading image with clou
 router.post("/image", upload.array("pictures", 24), async (req, res) => {
   try {
     let pictureFiles = req.files;

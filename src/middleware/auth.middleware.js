@@ -18,7 +18,7 @@ const authenticate = async (req, res, next) => {
       });
     }
     const decryptToken = await jwt.verify(token, process.env.SECRET_TOKEN, {
-      expiresIn: "1h",
+      expiresIn: "2h",
     });
     req.user = decryptToken;
     next();
@@ -28,7 +28,7 @@ const authenticate = async (req, res, next) => {
     });
   }
 };
-//  authenticating admin
+//  authorizing
 const authorize = async (req, res, next) => {
   try {
     if (req.user.role == "Admin") {

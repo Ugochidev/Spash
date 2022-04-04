@@ -8,8 +8,8 @@ const {
   countShortlets,
   fetchApartment,
 } = require("../controllers/shortlets.controller");
-//  creating a route
-router.post("/ uploadShortlets", authenticate, authorize, uploadShortlets);
+//  creating  route
+router.post("/uploadShortlets", authenticate, authorize, uploadShortlets);
 router.get("/fetchAllShortlets", fetchAllShortlets);
 router.get("/countShortlets", countShortlets);
 router.get("/fetchApartment", fetchApartment);

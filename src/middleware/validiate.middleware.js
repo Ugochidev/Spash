@@ -23,13 +23,6 @@ const validateLogin = Joi.object({
     .required(),
 });
 
-const isblocked = Joi.object({
-  email: Joi.string().email({
-    minDomainSegments: 2,
-    tlds: { allow: ["com", "net"] },
-  }),
-});
-
 const validiateUser = Joi.object({
   firstName: Joi.string().min(3).max(20).required(),
   lastName: Joi.string().min(3).max(20).required(),
@@ -51,15 +44,29 @@ const UserLogin = Joi.object({
     .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
     .required(),
 });
-const validPhoneNumber = Joi.object({
-  phoneNumber: Joi.string().min(10).max(13).required(),
+const validateshortlets = Joi.object({
+  id: Joi.number(),
+  apartmentName: Joi.string().max(20).required(),
+  state: Joi.string().max(20).required(),
+  numberOfRooms: Joi.string().max(13).required(),
+  address: Joi.string().max(100).required(),
+  amountPerNight: Joi.string().max(13).required(),
+  numberOfNights: Joi.string().max(13).required(),
 });
-
+const validatebooking = Joi.object({
+  id: Joi.number(),
+  reservation: Joi.string().max(20).required(),
+  time: Joi.string().max(20).required(),
+  amountPerDay: Joi.string().max(13).required(),
+  noOfNights: Joi.string().max(100).required(),
+  totalAmount: Joi.string().max(13),
+  date: Joi.string().max(13).required(),
+});
 module.exports = {
   validateRegister,
   validateLogin,
   validiateUser,
   UserLogin,
-  isblocked,
-  validPhoneNumber,
+  validatebooking,
+  validateshortlets,
 };

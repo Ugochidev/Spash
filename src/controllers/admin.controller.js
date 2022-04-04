@@ -1,5 +1,4 @@
 //  Require dependencies
-
 const Admin = require("../models/admin.model");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const AppError = require("../utils/appError");
@@ -17,9 +16,9 @@ const db = require("../DBconnect/connectPGsql");
 const createAdmin = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
-
+//  validating reg.body with joi
     const result = await validateRegister.validateAsync(req.body);
-
+// hashing password
     const hashPassword = await bcrypt.hash(password, 10);
 
     const newAdmin = await db.query(
@@ -31,14 +30,14 @@ const createAdmin = async (req, res, next) => {
       email: newAdmin.email,
       role: newAdmin.role,
     };
-    const url = "theolamideolanrewaju.com";
-    const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
-      expiresIn: "2h",
-    });
+  const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
+    expiresIn: "2h",
+  });
+  //  verifying email address with nodemailer
     let mailOptions = {
       to: newAdmin.email,
       subject: "Verify Email",
-      text: `Hi ${firstName}, Pls verify your email. ${url}
+      text: `Hi ${firstName}, Pls verify your email. 
        ${token}`,
     };
     await sendMail(mailOptions);
@@ -56,6 +55,7 @@ const createAdmin = async (req, res, next) => {
 const loginAdmin = async (req, res, next) => {
   try {
     const { phoneNumber, password } = req.body;
+    // joi validation
     const login = await validateLogin.validateAsync(req.body);
 
     const phoneNumberExist = await db.query(
@@ -86,7 +86,7 @@ const loginAdmin = async (req, res, next) => {
       phoneNumber: phoneNumberExist.phoneNumber,
       role: phoneNumberExist.role,
     };
-
+// creating a token
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "1h",
     });
