@@ -36,7 +36,6 @@ const bookShortlets = async (req, res, next) => {
         shortlets_id,
       ]
     );
-
     return successResMsg(res, 201, {
       message: "Shortlets booked",
       newbooking: newbooking.rows[0],
@@ -45,6 +44,8 @@ const bookShortlets = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
+
+
 const bookingPayment = async (req, res, next) => {
   try {
     const { id } = req.headers;
@@ -90,4 +91,8 @@ const paymentVerification = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-module.exports = { bookShortlets, bookingPayment, paymentVerification };
+module.exports = {
+  bookShortlets,
+  bookingPayment,
+  paymentVerification,
+};

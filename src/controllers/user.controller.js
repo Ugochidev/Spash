@@ -50,6 +50,8 @@ const createUser = async (req, res, next) => {
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "2h",
     });
+    // const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
+    // console.log(decodedToken);
     //  verifying email address with nodemailer
     let mailOptions = {
       to: newUser.email,
@@ -84,7 +86,8 @@ const verifyEmail = async (req, res, next) => {
     // user.isVerified = true;
     // // user.save();
     const verify = await db.execute(
-      "UPDATE users SET isVerified = true WHERE isVerified = false"
+      "UPDATE users SET isVerified = true WHERE email =?",
+      [email]
     );
     return successResMsg(res, 201, { message: "User verified successfully" });
   } catch (error) {
@@ -146,14 +149,18 @@ const forgetPasswordLink = async (req, res, next) => {
         message: "email address not found.",
       });
     }
+    // console.log(row);
     const data = {
-      phone: email.phoneNumber,
-      email: email.email,
-      role: email.role,
+      phone: row[0].phoneNumber,
+      email: row[0].email,
+      role: row[0].role,
     };
+    // console.log
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
+    const detoken = await jwt.verify(token, secret_key);
+    console.log(detoken)
     let mailOptions = {
       to: email.email,
       subject: "Reset Password",
@@ -162,11 +169,88 @@ const forgetPasswordLink = async (req, res, next) => {
     await sendMail(mailOptions);
     return successResMsg(res, 200, {
       message: `Hi ${row[0].firstName},reset password.`,
+      token,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
+
+const changePassword = async (req, res, next) => {
+  try {
+    const { newPassword, confirmPassword } = req.body;
+    const { email, token } = req.query;
+    const secret_key = process.env.SECRET_TOKEN;
+    const decoded_token = await jwt.verify(token, secret_key);
+    console.log(email);
+    console.log(decoded_token);
+    if (decoded_token.email !== email) {
+      return next(new AppError("Email do not match.", 404));
+    }
+    if (newPassword !== confirmPassword) {
+      return next(new AppError("Password do not match.", 404));
+    }
+    const hashPassword = await bcrypt.hash(confirmPassword, 10);
+    const updatedPassword = await db.execute(
+      "UPDATE users SET isVerified = true WHERE email =?",
+      [email],
+      [{ password: hashPassword }]
+    );
+    return successResMsg(res, 200, {
+      message: `Password has been updated successfully.`,
+    });
+  } catch (error) {
+    return errorResMsg(res, 500, { message: error.message });
+  }
+};
+
+
+const resetPassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+    const { email } = req.query;
+    const loggedUser = await db.execute("SELECT * FROM users WHERE email =?", [
+      email,
+    ]);
+    const headerTokenEmail = await jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      process.env.SECRET_TOKEN
+    ).email;
+    console.log(headerTokenEmail);
+    console.log(loggedUser[0][0].email);
+    if (headerTokenEmail !== loggedUser[0][0].email) {
+      return next(new AppError("Forbidden", 404));
+    }
+    console.log(loggedUser);
+    console.log(loggedUser[0][0].password);
+    const passwordMatch = await bcrypt.compare(
+      oldPassword,
+      loggedUser[0][0].password
+    );
+    console.log("//////////////////////////////////////")
+    if (!passwordMatch) {
+      return next(new AppError("old Password is not correct.", 404));
+    }
+
+    if (newPassword !== confirmPassword) {
+      return next(new AppError("Password do not match.", 400));
+    }
+
+    const hashPassword = await bcrypt.hash(confirmPassword, 10);
+
+    const resetPassword = await db.execute(
+      "SELECT * FROM users WHERE email =?",
+      [email],
+      [{ password: hashPassword }]
+    );
+    return successResMsg(res, 200, {
+      message: `Password has been updated successfully.`,
+    });
+  } catch (error) {
+    return errorResMsg(res, 500, { message: error.message });
+  }
+};
+
 
 //   exporting modules
 module.exports = {
@@ -174,4 +258,6 @@ module.exports = {
   verifyEmail,
   loginUser,
   forgetPasswordLink,
+  changePassword,
+  resetPassword,
 };

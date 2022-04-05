@@ -4,6 +4,7 @@ const {
   bookShortlets,
   bookingPayment,
   paymentVerification,
+
 } = require("../controllers/booking.controller");
 const { authenticate } = require("../middleware/auth.middleware");
 //  creating route
