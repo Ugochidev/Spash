@@ -4,9 +4,9 @@ class Shortlets {
     this.apartmentName = apartmentName;
     this.state = state;
     this.numberOfRooms = numberOfRooms;
-    this. address =  address;
+    this.address = address;
     this.amountPerNight = amountPerNight;
-    this.numberOfNights = numberOfNights;
+    this.pictures = pictures;
   }
 }
 

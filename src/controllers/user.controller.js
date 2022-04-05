@@ -18,7 +18,17 @@ const createUser = async (req, res, next) => {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
     // validating reg.body with joi
     const registerUser = await validiateUser.validateAsync(req.body);
-const [row]
+    const [row] = await db.execute(
+      "SELECT `email` FROM `users` WHERE `email` = ?",
+      [req.body.email]
+    );
+
+    if (row.length > 0) {
+      return res.status(400).json({
+        message: "the email already exist",
+      });
+    }
+    console.log(row);
     //  hashing password
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -28,8 +38,14 @@ const [row]
       [firstName, lastName, email, phoneNumber, hashPassword]
     );
     const data = {
-      email: newUser.email,
-      role: newUser.role,
+      id: row[0],
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+      Password: req.body.hashPassword,
+      role: req.body.role,
+      isVerified: req.body.isVerified,
     };
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "2h",
@@ -42,7 +58,7 @@ const [row]
        ${token}`,
     };
     await sendMail(mailOptions);
-    return successResMsg(res, 201, { message: "User created", newUser, token });
+    return successResMsg(res, 201, { message: "User created", data, token });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
   }
@@ -54,7 +70,7 @@ const verifyEmail = async (req, res, next) => {
   try {
     const { token } = req.headers;
     const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
-    
+
     const user = await db.execute("SELECT * FROM users WHERE email = ?", [
       {
         email: decodedToken.email,
@@ -65,8 +81,11 @@ const verifyEmail = async (req, res, next) => {
         message: "user verified already",
       });
     }
-    user.isVerified = true;
-    user.save();
+    // user.isVerified = true;
+    // // user.save();
+    const verify = await db.execute(
+      "UPDATE users SET isVerified = true WHERE isVerified = false"
+    );
     return successResMsg(res, 201, { message: "User verified successfully" });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -75,25 +94,33 @@ const verifyEmail = async (req, res, next) => {
 // logging in a user
 const loginUser = async (req, res, next) => {
   try {
-    const { phoneNumber, password } = req.body; 
+    const { email, password } = req.body;
     // validate with joi
+    if (email && password) {
+      const [row] = await db.execute("SELECT * FROM users WHERE email =?", [
+        email,
+      ]);
+      if (row.length === 0) {
+        return res.status(400).json({
+          message: "email address not found.",
+        });
+      }
+      const passMatch = await bcrypt.compareSync(password, row[0].password);
+      if (!passMatch) {
+        return res.status(400).json({ message: "incorrect paaword" });
+      }
+      if (row[0].isVerified === 0) {
+        return res.status(400).json({
+          message: "Unverified account.",
+        });
+      }
+    }
     const loginUser = await UserLogin.validateAsync(req.body);
-  
-    const phoneNumberExist = await db.execute(
-      "SELECT phoneNumber FROM users WHERE phoneNumber = password");
-    if (!phoneNumberExist) {
-      return next(
-        new AppError("PhoneNumber does not exist please sign-up", 400)
-      );
-    }
-    
-    if (phoneNumberExist.password) {
-      return next(new AppError("User not Verified", 401));
-    }
+
     const data = {
-      id: phoneNumberExist._id,
-      phoneNumber: phoneNumberExist.phoneNumber,
-      role: phoneNumberExist.role,
+      email: email.email,
+      phoneNumber: email.phoneNumber,
+      role: email.role,
     };
 
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
@@ -108,9 +135,43 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+const forgetPasswordLink = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const [row] = await db.execute("SELECT * FROM users WHERE email =?", [
+      email,
+    ]);
+    if (row.length === 0) {
+      return res.status(400).json({
+        message: "email address not found.",
+      });
+    }
+    const data = {
+      phone: email.phoneNumber,
+      email: email.email,
+      role: email.role,
+    };
+    // getting a secret token
+    const secret_key = process.env.SECRET_TOKEN;
+    const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
+    let mailOptions = {
+      to: email.email,
+      subject: "Reset Password",
+      text: `Hi ${email.firstName}, Reset your password with the link below.${token}`,
+    };
+    await sendMail(mailOptions);
+    return successResMsg(res, 200, {
+      message: `Hi ${row[0].firstName},reset password.`,
+    });
+  } catch (error) {
+    return errorResMsg(res, 500, { message: error.message });
+  }
+};
 
 //   exporting modules
 module.exports = {
   createUser,
+  verifyEmail,
   loginUser,
+  forgetPasswordLink,
 };

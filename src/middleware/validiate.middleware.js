@@ -16,7 +16,10 @@ const validateRegister = Joi.object({
 });
 
 const validateLogin = Joi.object({
-  phoneNumber: Joi.string().min(10).max(13).required(),
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: ["com", "net"] },
+  }),
   password: Joi.string()
     .min(8)
     .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
@@ -38,7 +41,10 @@ const validiateUser = Joi.object({
 });
 
 const UserLogin = Joi.object({
-  phoneNumber: Joi.string().min(10).max(13).required(),
+  email: Joi.string().email({
+    minDomainSegments: 2,
+    tlds: { allow: ["com", "net"] },
+  }),
   password: Joi.string()
     .min(8)
     .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
@@ -59,7 +65,9 @@ const validatebooking = Joi.object({
   time: Joi.string().max(20).required(),
   amountPerDay: Joi.string().max(13).required(),
   noOfNights: Joi.string().max(100).required(),
+  noOfRooms: Joi.string().max(100).required(),
   totalAmount: Joi.string().max(13),
+  shortlets_id: Joi.string().max(13),
   date: Joi.string().max(13).required(),
 });
 module.exports = {

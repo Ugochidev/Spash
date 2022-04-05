@@ -12,7 +12,7 @@ dotenv.config();
 const userRouter = require("./routes/user.route.js");
 const adminRouter = require("./routes/admin.route");
 const bookingRouter = require("./routes/booking.route");
-const shortletsRouter = require("./routes/shortlets.route")
+const shortletsRouter = require("./routes/shortlets.route");
 
 // google home page
 app.get("/auth", (req, res) => {

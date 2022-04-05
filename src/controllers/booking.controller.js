@@ -4,8 +4,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const db = require("../DBconnect/connectPGsql");
 const { successResMsg, errorResMsg } = require("../utils/response");
-const  {validatebooking} = require("../middleware/validiate.middleware")
-
+const { validatebooking } = require("../middleware/validiate.middleware");
 
 const bookShortlets = async (req, res, next) => {
   try {
@@ -16,19 +15,31 @@ const bookShortlets = async (req, res, next) => {
       amountPerDay,
       noOfNights,
       date,
-      id,
-    } = req.body; 
+      noOfRooms,
+      shortlets_id,
+    } = req.body;
     // validating reg.body with joi
-const validate = await  validatebooking.validateAsync(req.body); 
+    const validate = await validatebooking.validateAsync(req.body);
 
-    let totalAmount = noOfNights * amountPerDay;
+    let totalAmount = noOfRooms * noOfNights * amountPerDay;
     // booking
     const newbooking = await db.query(
-      "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,totalAmount, date) VALUES ($1, $2, $3, $4, $5, $6)",
-      [reservation, time, amountPerDay, noOfNights, totalAmount, date]
+      "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      [
+        reservation,
+        time,
+        amountPerDay,
+        noOfNights,
+        noOfRooms,
+        totalAmount,
+        date,
+        shortlets_id,
+      ]
     );
+
     return successResMsg(res, 201, {
-      message: "Shortlets",
+      message: "Shortlets booked",
+      newbooking: newbooking.rows[0],
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
