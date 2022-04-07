@@ -1,3 +1,4 @@
+
 //  Require dependencies
 const Admin = require("../models/admin.model");
 const { successResMsg, errorResMsg } = require("../utils/response");
