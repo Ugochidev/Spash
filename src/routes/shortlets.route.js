@@ -10,7 +10,13 @@ const {
 } = require("../controllers/shortlets.controller");
 const upload = require("../multer");
 //  creating  route
-router.post("/uploadShortlets", upload.array("pictures", 24), uploadShortlets);
+router.post(
+  "/uploadShortlets",
+  authenticate,
+  authorize,
+  upload.array("pictures", 24),
+  uploadShortlets
+);
 router.get("/fetchAllShortlets", fetchAllShortlets);
 router.get("/countShortlets", countShortlets);
 router.get("/fetchApartment", fetchApartment);

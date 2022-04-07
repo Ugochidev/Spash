@@ -208,15 +208,15 @@ const resetPassword = async (req, res, next) => {
     const loggedUser = await db.execute("SELECT * FROM users WHERE email =?", [
       email,
     ]);
-    // const headerTokenEmail = await jwt.verify(
-    //   req.headers.authorization.split(" ")[1],
-    //   process.env.SECRET_TOKEN
-    // ).email;
+    const headerTokenEmail = await jwt.verify(
+      req.headers.authorization.split(" ")[1],
+      process.env.SECRET_TOKEN
+    ).email;
     // console.log(headerTokenEmail);
     // console.log(loggedUser[0][0].email);
-    // if (headerTokenEmail !== loggedUser[0][0].email) {
-    //   return next(new AppError("Forbidden", 404));
-    // }
+    if (headerTokenEmail !== loggedUser[0][0].email) {
+      return next(new AppError("Forbidden", 404));
+    }
     // console.log(typeof loggedUser[0][0].password);
     // console.log(typeof oldPassword);
     // console.log(await bcrypt.compare(oldPassword, loggedUser[0][0].password));
