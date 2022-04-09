@@ -6,13 +6,13 @@ dotenv.config();
 // creating connection:
 const pool = new Pool({
   host: process.env.hostpg,
-  user:process.env.userpg,
+  user: process.env.userpg,
   port: process.env.portpg,
   password: process.env.passwordpg,
   database: process.env.databasepg,
 });
 
-pool.query('SELECT NOW()', (err, res) => {
+pool.query("SELECT NOW()", (err, res) => {
   if (!err) {
     console.log("connected to PGsql");
   } else {

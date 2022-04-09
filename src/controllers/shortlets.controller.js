@@ -1,5 +1,4 @@
 const Shortlets = require("../models/shortlets.model");
-const ApartmentPicture = require("../models/apartment.model");
 const cloudinaryUploadMethod = require("../cloudinary");
 const path = require("path");
 const express = require("express");
@@ -10,10 +9,10 @@ const AppError = require("../utils/appError");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const { validateshortlets } = require("../middleware/validiate.middleware");
 
+
+// Uploading shortlets
 const uploadShortlets = async (req, res, next) => {
   try {
-    // let pictureFiles = req.files;
-
     const urls = [];
     const files = req.files;
     if (!files)
@@ -24,20 +23,14 @@ const uploadShortlets = async (req, res, next) => {
 
       urls.push(newPath);
     }
-    console.log(urls);
-
     images = urls.map((url) => url.res);
-    console.log("urls..................////////////////////");
-    console.log(images);
-    console.log("urls..................////////////////////");
-    console.log(req.files);
+   
     const { apartmentName, state, numberOfRooms, address, amountPerNight } =
       req.body;
     // validating reg.body with joi
-    const validate = await validateshortlets.validateAsync(req.body);
+    await validateshortlets.validateAsync(req.body);
     pictures = images;
-    //  Uploading  Shortlets
-    const newShortlets = await db.query(
+    await db.query(
       "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6)",
       [apartmentName, state, numberOfRooms, address, amountPerNight, images]
     );
@@ -103,27 +96,10 @@ const fetchApartment = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-// //  Uploading image with clou
-// router.post("/image", upload.array("pictures", 24), async (req, res) => {
-//   try {
-
-//     const newHousePics = new ApartmentPicture({
-//       imageResponses: images,
-//     });
-//     res.status(200).json({
-//       imageResponses: images,
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       message: err.message,
-//     });
-//   }
-// });
 
 module.exports = {
   uploadShortlets,
   fetchAllShortlets,
   countShortlets,
   fetchApartment,
-  router,
 };

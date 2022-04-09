@@ -9,6 +9,7 @@ const keys = require("./utils/keys");
 const { app } = require("./app");
 const dotenv = require("dotenv");
 dotenv.config();
+
 const userRouter = require("./routes/user.route.js");
 const adminRouter = require("./routes/admin.route");
 const bookingRouter = require("./routes/booking.route");

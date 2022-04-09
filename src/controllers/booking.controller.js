@@ -6,6 +6,7 @@ const db = require("../DBconnect/connectPGsql");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const { validatebooking } = require("../middleware/validiate.middleware");
 
+// booking a shortlet
 const bookShortlets = async (req, res, next) => {
   try {
     const {
@@ -19,9 +20,9 @@ const bookShortlets = async (req, res, next) => {
       shortlets_id,
     } = req.body;
     // validating reg.body with joi
-    const validate = await validatebooking.validateAsync(req.body);
+    await validatebooking.validateAsync(req.body);
 
-    let totalAmount = noOfRooms * noOfNights * amountPerDay;
+    let totalAmount = (noOfRooms * noOfNights) * amountPerDay;
     // booking
     const newbooking = await db.query(
       "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
@@ -46,6 +47,8 @@ const bookShortlets = async (req, res, next) => {
 };
 
 
+//  booking payment with paystack
+
 const bookingPayment = async (req, res, next) => {
   try {
     const { id } = req.headers;
@@ -69,7 +72,7 @@ const bookingPayment = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-
+//   making payment using paystack
 const paymentVerification = async (req, res, next) => {
   try {
     const { reference } = req.headers;

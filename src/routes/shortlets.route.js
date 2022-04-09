@@ -11,14 +11,14 @@ const {
 const upload = require("../multer");
 //  creating  route
 router.post(
-  "/uploadShortlets",
+  "/shortlets",
   authenticate,
   authorize,
   upload.array("pictures", 24),
   uploadShortlets
 );
-router.get("/fetchAllShortlets", fetchAllShortlets);
-router.get("/countShortlets", countShortlets);
-router.get("/fetchApartment", fetchApartment);
+router.get("/shortlets", fetchAllShortlets);
+router.get("/shortlets", countShortlets);
+router.get("/apartment", fetchApartment);
 //    exporting modules
 module.exports = router;

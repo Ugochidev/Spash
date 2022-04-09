@@ -12,23 +12,24 @@ const {
 } = require("../middleware/validiate.middleware");
 const db = require("../DBconnect/connectMysql");
 
+
 //  creating  a user
 const createUser = async (req, res, next) => {
   try {
     const { firstName, lastName, phoneNumber, email, password } = req.body;
     // validating reg.body with joi
-    const registerUser = await validiateUser.validateAsync(req.body);
-    const [row] = await db.execute(
+    await validiateUser.validateAsync(req.body);
+    // checking if a user already has an account
+    const [user] = await db.execute(
       "SELECT `email` FROM `users` WHERE `email` = ?",
       [req.body.email]
     );
 
-    if (row.length > 0) {
+    if (user.length > 0) {
       return res.status(400).json({
         message: "the email already exist",
       });
     }
-    console.log(row);
     //  hashing password
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -37,21 +38,20 @@ const createUser = async (req, res, next) => {
       "INSERT INTO users (firstName, lastName,  email, phoneNumber, password) VALUES ( ?, ?, ?, ?, ?)",
       [firstName, lastName, email, phoneNumber, hashPassword]
     );
+    // creating a payload
     const data = {
-      id: row[0],
+      id: newUser.id,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
       phoneNumber: req.body.phoneNumber,
-      Password: req.body.hashPassword,
       role: req.body.role,
       isVerified: req.body.isVerified,
     };
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "2h",
     });
-    // const decodedToken = await jwt.verify(token, process.env.SECRET_TOKEN);
-    // console.log(decodedToken);
+    
     //  verifying email address with nodemailer
     let mailOptions = {
       to: newUser.email,
@@ -77,14 +77,13 @@ const verifyEmail = async (req, res, next) => {
         email: decodedToken.email,
       },
     ]);
-    // console.log("decodedToken");
+  
     if (user.verified) {
       return successResMsg(res, 200, {
         message: "user verified already",
       });
     }
-    // user.isVerified = true;
-    // // user.save();
+    
     const verify = await db.execute(
       "UPDATE users SET isVerified = true WHERE isVerified = false",
     );
@@ -98,30 +97,30 @@ const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     // validate with joi
+    await UserLogin.validateAsync(req.body);
+    //  checking email and password match
     if (email && password) {
-      const [row] = await db.execute("SELECT * FROM users WHERE email =?", [
+      const [user] = await db.execute("SELECT * FROM users WHERE email =?", [
         email,
       ]);
-      if (row.length === 0) {
+      if (user.length === 0) {
         return res.status(400).json({
           message: "email address not found.",
         });
       }
-      const passMatch = await bcrypt.compareSync(password, row[0].password);
+      const passMatch = await bcrypt.compare(password, row[0].password);
       if (!passMatch) {
         return res.status(400).json({ message: "incorrect paaword" });
       }
-      if (row[0].isVerified === 0) {
+      if (user[0].isVerified === 0) {
         return res.status(400).json({
           message: "Unverified account.",
         });
       }
     }
-    const loginUser = await UserLogin.validateAsync(req.body);
-
+    // creating a payload
     const data = {
       email: email.email,
-      phoneNumber: email.phoneNumber,
       role: email.role,
     };
 
@@ -140,26 +139,23 @@ const loginUser = async (req, res, next) => {
 const forgetPasswordLink = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const [row] = await db.execute("SELECT * FROM users WHERE email =?", [
+    const [user] = await db.execute("SELECT * FROM users WHERE email =?", [
       email,
     ]);
-    if (row.length === 0) {
+    if (user.length === 0) {
       return res.status(400).json({
         message: "email address not found.",
       });
     }
-    // console.log(row);
     const data = {
-      phone: row[0].phoneNumber,
-      email: row[0].email,
-      role: row[0].role,
+      email: user[0].email,
+      role: user[0].role,
     };
-    // console.log
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
-    const detoken = await jwt.verify(token, secret_key);
-    console.log(detoken);
+    await jwt.verify(token, secret_key);
+    
     let mailOptions = {
       to: email.email,
       subject: "Reset Password",
@@ -167,7 +163,7 @@ const forgetPasswordLink = async (req, res, next) => {
     };
     await sendMail(mailOptions);
     return successResMsg(res, 200, {
-      message: `Hi ${row[0].firstName},reset password.`,
+      message: `Hi ${user[0].firstName},reset password.`,
       token,
     });
   } catch (error) {
@@ -181,8 +177,7 @@ const changePassword = async (req, res, next) => {
     const { email, token } = req.query;
     const secret_key = process.env.SECRET_TOKEN;
     const decoded_token = await jwt.verify(token, secret_key);
-    console.log(email);
-    console.log(decoded_token);
+  
     if (decoded_token.email !== email) {
       return next(new AppError("Email do not match.", 404));
     }
@@ -212,22 +207,16 @@ const resetPassword = async (req, res, next) => {
       req.headers.authorization.split(" ")[1],
       process.env.SECRET_TOKEN
     ).email;
-    // console.log(headerTokenEmail);
-    // console.log(loggedUser[0][0].email);
+    
     if (headerTokenEmail !== loggedUser[0][0].email) {
       return next(new AppError("Forbidden", 404));
     }
-    // console.log(typeof loggedUser[0][0].password);
-    // console.log(typeof oldPassword);
-    // console.log(await bcrypt.compare(oldPassword, loggedUser[0][0].password));
-    // console.log(await bcrypt.compare(loggedUser[0][0].password, oldPassword));
-    // console.log(loggedUser[0][0].password);
+   
     const passwordMatch = await bcrypt.compare(
       oldPassword,
       loggedUser[0][0].password
     );
-    // console.log(oldPassword);
-    // console.log("//////////////////////////////////////")
+   
     if (!passwordMatch) {
       return next(new AppError("old Password is not correct.", 404));
     }
