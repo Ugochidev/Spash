@@ -4,12 +4,11 @@ const {
   bookShortlets,
   bookingPayment,
   paymentVerification,
-
 } = require("../controllers/booking.controller");
 const { authenticate } = require("../middleware/auth.middleware");
 //  creating route
-router.post("/shortlets", authenticate, bookShortlets);
+router.post("/book/shortlets", authenticate, bookShortlets);
 router.post("/payment", authenticate, bookingPayment);
-router.get("/payment", authenticate, paymentVerification);
+router.get("/verification/payment", authenticate, paymentVerification);
 
 module.exports = router;

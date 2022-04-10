@@ -50,7 +50,7 @@ const createAdmin = async (req, res, next) => {
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "2h",
     });
-    
+
     //  verifying email address with nodemailer
     let mailOptions = {
       to: newAdmin.email,
@@ -76,7 +76,7 @@ const verifyEmailAddress = async (req, res, next) => {
         email: decodedToken.email,
       },
     ]);
-  
+
     if (admin.verified) {
       return successResMsg(res, 200, {
         message: "admin verified already",
@@ -96,7 +96,7 @@ const loginAdmin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     // validate with joi
-     await validateLogin.validateAsync(req.body);
+    await validateLogin.validateAsync(req.body);
     //  check for correct password
     if (email && password) {
       const [admin] = await db.execute("SELECT * FROM admin WHERE email =?", [
@@ -108,7 +108,7 @@ const loginAdmin = async (req, res, next) => {
           message: "email address not found.",
         });
       }
-      const passMatch = await bcrypt.compareSync(password, row[0].password);
+      const passMatch = await bcrypt.compareSync(password, admin[0].password);
       if (!passMatch) {
         return res.status(400).json({ message: "incorrect paaword" });
       }
@@ -183,7 +183,7 @@ const forgetPassword = async (req, res, next) => {
     const { email, token } = req.query;
     const secret_key = process.env.SECRET_TOKEN;
     const decoded_token = await jwt.verify(token, secret_key);
-   
+
     if (decoded_token.email !== email) {
       return next(new AppError("Email do not match.", 404));
     }
@@ -215,16 +215,16 @@ const updatePassword = async (req, res, next) => {
       req.headers.authorization.split(" ")[1],
       process.env.SECRET_TOKEN
     ).email;
-    
+    console.log(headerTokenEmail);
     if (headerTokenEmail !== loggedAdmin[0][0].email) {
       return next(new AppError("Forbidden", 404));
     }
-   
+
     const passwordMatch = await bcrypt.compare(
       oldPassword,
       loggedAdmin[0][0].password
     );
-  
+
     if (!passwordMatch) {
       return next(new AppError("old Password is not correct.", 404));
     }

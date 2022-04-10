@@ -47,11 +47,6 @@ const uploadShortlets = async (req, res, next) => {
 
 const fetchAllShortlets = async (req, res, next) => {
   try {
-    const { page, limit } = req.headers;
-    if (limit === null || page === null) {
-      limit = 10;
-      page = 1;
-    }
     // pagination
     const allShortlets = await db.query(
       "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET (1 - 1) * 10"
@@ -59,8 +54,8 @@ const fetchAllShortlets = async (req, res, next) => {
     const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "Shortlets fetch successfully",
-      count,
-      allShortlets,
+      count:count.rows[0],
+      allShortlets:allShortlets.rows,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -73,7 +68,7 @@ const countShortlets = async (req, res, next) => {
     const numberShortlets = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "number of all available shortlets",
-      numberShortlets,
+      numberOfShortlets:numberShortlets.rows[0],
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -90,7 +85,7 @@ const fetchApartment = async (req, res, next) => {
     );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
-      apartmentByState,
+      apartmentByState: apartmentByState.rows[0],
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });

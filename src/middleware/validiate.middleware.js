@@ -57,7 +57,6 @@ const validateshortlets = Joi.object({
   numberOfRooms: Joi.string().max(13).required(),
   address: Joi.string().max(100).required(),
   amountPerNight: Joi.string().max(13).required(),
-  numberOfNights: Joi.string().max(13).required(),
 });
 const validatebooking = Joi.object({
   id: Joi.number(),

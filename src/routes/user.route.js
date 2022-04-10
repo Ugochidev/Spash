@@ -11,16 +11,16 @@ const {
   changePassword,
   resetPassword,
 } = require("../controllers/user.controller");
-const keycloak = require("../utils/keycloak").getKeycloak();
-app.use(keycloak.middleware());
+// const keycloak = require("../utils/keycloak").getKeycloak();
+// app.use(keycloak.middleware());
 
 //  creating route
 router.post("/user", createUser);
-router.post("/user", verifyEmail);
-router.post("/user", loginUser);
-router.post("/user", forgetPasswordLink);
-router.post("/user", changePassword);
-router.post("/user", authenticate, resetPassword);
+router.post("/verifyemail/user", verifyEmail);
+router.post("/login/user", loginUser);
+router.post("/forgetPasswordLink/user", forgetPasswordLink);
+router.post("/forgetpassword/user", changePassword);
+router.post("/updatepassword/user", authenticate, resetPassword);
 
 //    exporting modules
 module.exports = router;

@@ -66,7 +66,7 @@ const bookingPayment = async (req, res, next) => {
     });
     return res.status(200).json({
       data: data.data.data,
-      bookings: booking,
+      // bookings: booking.rows,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -75,7 +75,7 @@ const bookingPayment = async (req, res, next) => {
 //   making payment using paystack
 const paymentVerification = async (req, res, next) => {
   try {
-    const { reference } = req.headers;
+    const { reference } = req.query;
     const data = await axios({
       url: `https://api.paystack.co/transaction/verify/${reference}`,
       method: "get",

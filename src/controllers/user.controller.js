@@ -12,7 +12,6 @@ const {
 } = require("../middleware/validiate.middleware");
 const db = require("../DBconnect/connectMysql");
 
-
 //  creating  a user
 const createUser = async (req, res, next) => {
   try {
@@ -51,7 +50,7 @@ const createUser = async (req, res, next) => {
     const token = await jwt.sign(data, process.env.SECRET_TOKEN, {
       expiresIn: "2h",
     });
-    
+
     //  verifying email address with nodemailer
     let mailOptions = {
       to: newUser.email,
@@ -77,15 +76,15 @@ const verifyEmail = async (req, res, next) => {
         email: decodedToken.email,
       },
     ]);
-  
+
     if (user.verified) {
       return successResMsg(res, 200, {
         message: "user verified already",
       });
     }
-    
+
     const verify = await db.execute(
-      "UPDATE users SET isVerified = true WHERE isVerified = false",
+      "UPDATE users SET isVerified = true WHERE isVerified = false"
     );
     return successResMsg(res, 201, { message: "User verified successfully" });
   } catch (error) {
@@ -108,7 +107,7 @@ const loginUser = async (req, res, next) => {
           message: "email address not found.",
         });
       }
-      const passMatch = await bcrypt.compare(password, row[0].password);
+      const passMatch = await bcrypt.compare(password, user[0].password);
       if (!passMatch) {
         return res.status(400).json({ message: "incorrect paaword" });
       }
@@ -155,7 +154,7 @@ const forgetPasswordLink = async (req, res, next) => {
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
     await jwt.verify(token, secret_key);
-    
+
     let mailOptions = {
       to: email.email,
       subject: "Reset Password",
@@ -177,7 +176,7 @@ const changePassword = async (req, res, next) => {
     const { email, token } = req.query;
     const secret_key = process.env.SECRET_TOKEN;
     const decoded_token = await jwt.verify(token, secret_key);
-  
+
     if (decoded_token.email !== email) {
       return next(new AppError("Email do not match.", 404));
     }
@@ -208,15 +207,17 @@ const resetPassword = async (req, res, next) => {
       process.env.SECRET_TOKEN
     ).email;
     
+    console.log(headerTokenEmail);
     if (headerTokenEmail !== loggedUser[0][0].email) {
       return next(new AppError("Forbidden", 404));
     }
-   
+
+
     const passwordMatch = await bcrypt.compare(
       oldPassword,
       loggedUser[0][0].password
     );
-   
+
     if (!passwordMatch) {
       return next(new AppError("old Password is not correct.", 404));
     }
