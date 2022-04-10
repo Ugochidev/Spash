@@ -16,7 +16,8 @@ const uploadShortlets = async (req, res, next) => {
     const urls = [];
     const files = req.files;
     if (!files)
-      return res.status(400).json({ message: "No picture attached!" });
+    return next(new AppError("No picture attached..", 400));
+      // return res.status(400).json({ message: "No picture attached!" });
     for (const file of files) {
       const { path } = file;
       const newPath = await cloudinaryUploadMethod(path);
@@ -76,7 +77,6 @@ const countShortlets = async (req, res, next) => {
 };
 
 //  fetch apartment by State
-
 const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.headers;
