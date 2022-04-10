@@ -22,7 +22,7 @@ const bookShortlets = async (req, res, next) => {
     // validating reg.body with joi
     await validatebooking.validateAsync(req.body);
 
-    let totalAmount = (noOfRooms * noOfNights) * amountPerDay;
+    let totalAmount = noOfRooms * noOfNights * amountPerDay;
     // booking
     const newbooking = await db.query(
       "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
@@ -45,7 +45,6 @@ const bookShortlets = async (req, res, next) => {
     return errorResMsg(res, 500, { message: error.message });
   }
 };
-
 
 //  booking payment with paystack
 
