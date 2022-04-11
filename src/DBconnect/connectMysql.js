@@ -4,7 +4,7 @@ dotenv.config();
 // creating connection
 const connection = mysql.createConnection({
   host: process.env.host,
-  // port: process.env.port,
+  port: process.env.port,
   user: process.env.user,
   password: process.env.password,
   database: process.env.database,
@@ -17,4 +17,5 @@ connection.connect(function (err) {
 
   console.log("Connected to the MySQL server.");
 });
-module.exports = connection.promise();
+// module.exports = connection.promise();
+connection.end()

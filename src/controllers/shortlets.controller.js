@@ -9,15 +9,13 @@ const AppError = require("../utils/appError");
 const { successResMsg, errorResMsg } = require("../utils/response");
 const { validateshortlets } = require("../middleware/validiate.middleware");
 
-
 // Uploading shortlets
 const uploadShortlets = async (req, res, next) => {
   try {
     const urls = [];
     const files = req.files;
-    if (!files)
-    return next(new AppError("No picture attached..", 400));
-      // return res.status(400).json({ message: "No picture attached!" });
+    if (!files) return next(new AppError("No picture attached..", 400));
+    // return res.status(400).json({ message: "No picture attached!" });
     for (const file of files) {
       const { path } = file;
       const newPath = await cloudinaryUploadMethod(path);
@@ -25,7 +23,7 @@ const uploadShortlets = async (req, res, next) => {
       urls.push(newPath);
     }
     images = urls.map((url) => url.res);
-   
+
     const { apartmentName, state, numberOfRooms, address, amountPerNight } =
       req.body;
     // validating reg.body with joi
@@ -55,8 +53,8 @@ const fetchAllShortlets = async (req, res, next) => {
     const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "Shortlets fetch successfully",
-      count:count.rows[0],
-      allShortlets:allShortlets.rows,
+      count: count.rows[0],
+      allShortlets: allShortlets.rows,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -69,7 +67,7 @@ const countShortlets = async (req, res, next) => {
     const numberShortlets = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "number of all available shortlets",
-      numberOfShortlets:numberShortlets.rows[0],
+      numberOfShortlets: numberShortlets.rows[0],
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
@@ -80,8 +78,12 @@ const countShortlets = async (req, res, next) => {
 const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.headers;
+    // const apartmentByState = await db.query(
+    //   "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
+    // );
     const apartmentByState = await db.query(
-      "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
+      "SELECT * FROM shortlets WHERE state = $1",
+      [state]
     );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
