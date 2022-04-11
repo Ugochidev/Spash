@@ -19,7 +19,7 @@ const createAdmin = async (req, res, next) => {
     // validating reg.body with joi
     await validateRegister.validateAsync(req.body);
     // checking if a user already has an account
-    const [admin] = await db.execute(
+    const [admin] = await db.query(
       "SELECT `email` FROM `admin` WHERE `email` = ?",
       [req.body.email]
     );
