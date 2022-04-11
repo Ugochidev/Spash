@@ -19,7 +19,7 @@ const createAdmin = async (req, res, next) => {
     // validating reg.body with joi
     await validateRegister.validateAsync(req.body);
     // checking if a user already has an account
-    const [admin] = await db.query(
+    const [admin] = await db.execute(
       "SELECT `email` FROM `admin` WHERE `email` = ?",
       [req.body.email]
     );
@@ -33,13 +33,13 @@ const createAdmin = async (req, res, next) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
     // creating a new admin
-    const [newAdmin] = await db.query(
+    const [newAdmin] = await db.execute(
       "INSERT INTO admin (firstName, lastName,  email, phoneNumber, password) VALUES ( ?, ?, ?, ?, ?)",
       [firstName, lastName, email, phoneNumber, hashPassword]
     );
     // creating a payload
     const data = {
-      id: newAdmin[0],
+      id: req.body.id,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       email: req.body.email,
@@ -110,7 +110,7 @@ const loginAdmin = async (req, res, next) => {
       }
       const passMatch = await bcrypt.compareSync(password, admin[0].password);
       if (!passMatch) {
-        return res.status(400).json({ message: "incorrect paaword" });
+        return res.status(400).json({ message: "incorrect password" });
       }
       if (emailexist[0].isVerified === 0) {
         return res.status(400).json({
