@@ -164,12 +164,10 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
       subject: "Reset Password",
       text: `Hi ${email.firstName}, Reset your password with the link below.${token}`,
     };
-  console.log(row);
-  console.log(email);
     await sendMail(mailOptions);
 
     return successResMsg(res, 200, {
-      message: `Hi ${email[0].firstName},reset password.`,
+      message: `Hi ${row[0].firstName},reset password.`,
       token,
     });
   } catch (error) {
