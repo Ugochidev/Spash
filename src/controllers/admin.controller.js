@@ -142,7 +142,7 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     const [row] = await db.execute("SELECT * FROM admin WHERE email =?", [
       email,
     ]);
-    if (admin.length === 0) {
+    if (row.length === 0) {
       return res.status(400).json({
         message: "email address not found.",
       });
@@ -156,7 +156,7 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
-    const detoken = await jwt.verify(token, secret_key);
+    await jwt.verify(token, secret_key);
     
     //  sending email with nodemailer
     let mailOptions = {
