@@ -139,7 +139,7 @@ const loginAdmin = async (req, res, next) => {
 const forgetPasswordLinkAdmin = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const [admin] = await db.execute("SELECT * FROM admin WHERE email =?", [
+    const [row] = await db.execute("SELECT * FROM admin WHERE email =?", [
       email,
     ]);
     if (admin.length === 0) {
@@ -149,9 +149,9 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     }
     // creating a payload
     const data = {
-      phone: admin[0].phoneNumber,
-      email: admin[0].email,
-      role: admin[0].role,
+      phone: row[0].phoneNumber,
+      email: row[0].email,
+      role: row[0].role,
     };
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
@@ -162,10 +162,10 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     let mailOptions = {
       to: email.email,
       subject: "Reset Password",
-      text: `Hi ${admin.firstName}, Reset your password with the link below.${token}`,
+      text: `Hi ${email.firstName}, Reset your password with the link below.${token}`,
     };
-    console.log(admin);
-    console.log(email);
+  console.log(row);
+  console.log(email);
     await sendMail(mailOptions);
 
     return successResMsg(res, 200, {
