@@ -33,7 +33,7 @@ const createAdmin = async (req, res, next) => {
     const hashPassword = await bcrypt.hash(password, 10);
 
     // creating a new admin
-    const [newAdmin] = await db.execute(
+    const [newAdmin] = await db.query(
       "INSERT INTO admin (firstName, lastName,  email, phoneNumber, password) VALUES ( ?, ?, ?, ?, ?)",
       [firstName, lastName, email, phoneNumber, hashPassword]
     );
