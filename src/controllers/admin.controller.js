@@ -157,7 +157,8 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
     const detoken = await jwt.verify(token, secret_key);
-    console.log(detoken);
+    console.log(admin);
+    console.log(email);
     //  sending email with nodemailer
     let mailOptions = {
       to: email.email,
