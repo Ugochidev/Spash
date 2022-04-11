@@ -162,7 +162,7 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     let mailOptions = {
       to: email.email,
       subject: "Reset Password",
-      text: `Hi ${email.firstName}, Reset your password with the link below.${token}`,
+      text: `Hi ${admin.firstName}, Reset your password with the link below.${token}`,
     };
     await sendMail(mailOptions);
 
