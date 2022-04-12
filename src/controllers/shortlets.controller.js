@@ -44,21 +44,20 @@ const uploadShortlets = async (req, res, next) => {
 //   fetch all available shortlets
 
 const fetchAllShortlets = async (req, res, next) => {
-  try {
-    const { page } = req.query;
+  try { 
+    const {page} = req.query
     // pagination
     const allShortlets = await db.query(
-      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET " + (page - 1) * 10
+      `SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET ${(page - 1) * 10}`
     );
-    if (
-      allShortlets.rows[0] == null ||
+    if(
+      allShortlets.rows[0]== null ||
       !allShortlets.rows[0] ||
-      allShortlets.rows[0] == []
-    ) {
-      S;
+      allShortlets.rows[0]== []
+    ){
       returnres.status(404).json({
-        message: "page not found",
-      });
+        message:"page not found"
+      })
     }
     const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
@@ -87,14 +86,14 @@ const countShortlets = async (req, res, next) => {
 //  fetch apartment by State
 const fetchApartment = async (req, res, next) => {
   try {
-    const { state } = req.body;
-    const apartmentByState = await db.query(
-      "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
-    );
+    const { state } = req.query;
     // const apartmentByState = await db.query(
-    //   "SELECT * FROM shortlets WHERE state = $1",
-    //   [state]
+    //   "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
     // );
+    const apartmentByState = await db.query(
+      "SELECT * FROM shortlets WHERE state = $1",
+      [state]
+    );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
       apartmentByState: apartmentByState.rows,
