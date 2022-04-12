@@ -181,11 +181,14 @@ const changePassword = async (req, res, next) => {
       return next(new AppError("Email do not match.", 404));
     }
     if (newPassword !== confirmPassword) {
-      return next(new AppError("Password do not match.", 404));
+     return res.status(400).json({
+       message: "Password do not match.",
+     });
     }
-    const hashPassword = await bcrypt.hash(confirmPassword, 10);
-    const updatedPassword = await db.execute(
-      "UPDATE users SET isVerified = true WHERE isVerified = true"
+    await bcrypt.hash(confirmPassword, 10);
+    await db.execute(
+      "UPDATE admin SET password = password WHERE password = password",
+      [newPassword]
     );
     return successResMsg(res, 200, {
       message: `Password has been updated successfully.`,
@@ -219,11 +222,15 @@ const resetPassword = async (req, res, next) => {
     );
 
     if (!passwordMatch) {
-      return next(new AppError("old Password is not correct.", 404));
+    return res.status(400).json({
+      message: "old Password is not correct.",
+    });
     }
 
     if (newPassword !== confirmPassword) {
-      return next(new AppError("Password do not match.", 400));
+       return res.status(400).json({
+         message: "Password do not match.",
+       });
     }
 
     const hashPassword = await bcrypt.hash(confirmPassword, 10);

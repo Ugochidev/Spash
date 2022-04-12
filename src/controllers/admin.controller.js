@@ -188,7 +188,9 @@ const forgetPassword = async (req, res, next) => {
       return next(new AppError("Email do not match.", 404));
     }
     if (newPassword !== confirmPassword) {
-      return next(new AppError("Password do not match.", 404));
+      return res.status(400).json({
+        message: "Password do not match.",
+      });
     }
     await bcrypt.hash(confirmPassword, 10);
     await db.execute(
@@ -227,14 +229,12 @@ const updatePassword = async (req, res, next) => {
     );
 
     if (!passwordMatch) {
-      // return next(new AppError("old Password is not correct.", 404));
        return res.status(400).json({
          message: "old Password is not correct.",
        });
     }
 
     if (newPassword !== confirmPassword) {
-      // return next(new AppError("Password do not match.", 400));
       return res.status(400).json({
         message: "Password do not match.",
       });
