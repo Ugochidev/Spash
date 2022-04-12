@@ -216,7 +216,7 @@ const updatePassword = async (req, res, next) => {
       req.headers.authorization.split(" ")[1],
       process.env.SECRET_TOKEN
     ).email;
-    console.log(headerTokenEmail);
+  
     if (headerTokenEmail !== loggedAdmin[0][0].email) {
       return next(new AppError("Forbidden", 404));
     }
@@ -227,7 +227,10 @@ const updatePassword = async (req, res, next) => {
     );
 
     if (!passwordMatch) {
-      return next(new AppError("old Password is not correct.", 404));
+      // return next(new AppError("old Password is not correct.", 404));
+       return res.status(400).json({
+         message: "old Password is not correct.",
+       });
     }
 
     if (newPassword !== confirmPassword) {
