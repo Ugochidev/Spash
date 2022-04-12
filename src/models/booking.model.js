@@ -9,7 +9,7 @@ class Booking {
     this.date = date;
     this.noOfRooms = noOfRooms;
     this.shortlets_id = shortlets_id;
-    this.user_id = this.user_id;
+    this.user_mysql_id = this.user_mysql_id;
 }
 }
 module.exports = Booking;
