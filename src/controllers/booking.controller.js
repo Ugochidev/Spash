@@ -36,6 +36,7 @@ const bookShortlets = async (req, res, next) => {
         totalAmount,
         date,
         shortlets_id,
+        
       ]
     );
     return successResMsg(res, 201, {
