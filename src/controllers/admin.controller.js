@@ -193,7 +193,7 @@ const forgetPassword = async (req, res, next) => {
     await bcrypt.hash(confirmPassword, 10);
     await db.execute(
     "UPDATE admin SET password = ? WHERE password = ?",
-      [{password : newPassword}]
+      [ password ]
     );
     return successResMsg(res, 200, {
       message: `Password has been updated successfully.`,
