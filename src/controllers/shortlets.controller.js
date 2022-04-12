@@ -15,7 +15,6 @@ const uploadShortlets = async (req, res, next) => {
     const urls = [];
     const files = req.files;
     if (!files) return next(new AppError("No picture attached..", 400));
-    // return res.status(400).json({ message: "No picture attached!" });
     for (const file of files) {
       const { path } = file;
       const newPath = await cloudinaryUploadMethod(path);
@@ -45,11 +44,21 @@ const uploadShortlets = async (req, res, next) => {
 //   fetch all available shortlets
 
 const fetchAllShortlets = async (req, res, next) => {
-  try {
+  try { 
+    const {page} = req.query
     // pagination
     const allShortlets = await db.query(
-      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET (2 - 1) * 10"
+      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET (${page - 1) * 10}"
     );
+    if(
+      allShortlets.rows[0]== null ||
+      !allShortlets.rows[0] ||
+      allShortlets.rows[0]== []
+    ){
+      returnres.status(404).json({
+        message:"page not found"
+      })
+    }
     const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
       message: "Shortlets fetch successfully",
