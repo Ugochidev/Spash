@@ -29,12 +29,13 @@ const uploadShortlets = async (req, res, next) => {
     // validating reg.body with joi
     await validateshortlets.validateAsync(req.body);
     pictures = images;
-    await db.query(
+    const spash = await db.query(
       "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6)",
       [apartmentName, state, numberOfRooms, address, amountPerNight, images]
     );
     return successResMsg(res, 201, {
       message: "Shortlets  created",
+      spash,
       images: images,
     });
   } catch (error) {
@@ -77,7 +78,7 @@ const countShortlets = async (req, res, next) => {
 //  fetch apartment by State
 const fetchApartment = async (req, res, next) => {
   try {
-    const { state } = req.headers;
+    const { state } = req.query;
     // const apartmentByState = await db.query(
     //   "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
     // );
