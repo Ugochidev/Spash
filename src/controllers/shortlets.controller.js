@@ -87,7 +87,7 @@ const fetchApartment = async (req, res, next) => {
     // );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
-      apartmentByState: apartmentByState.rows,
+      apartmentByState: apartmentByState,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
