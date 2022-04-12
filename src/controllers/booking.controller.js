@@ -18,6 +18,7 @@ const bookShortlets = async (req, res, next) => {
       date,
       noOfRooms,
       shortlets_id,
+      user_id,
     } = req.body;
     // validating reg.body with joi
     await validatebooking.validateAsync(req.body);
@@ -25,7 +26,7 @@ const bookShortlets = async (req, res, next) => {
     let totalAmount = noOfRooms * noOfNights * amountPerDay;
     // booking
     const newbooking = await db.query(
-      "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+      "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
       [
         reservation,
         time,
@@ -35,6 +36,7 @@ const bookShortlets = async (req, res, next) => {
         totalAmount,
         date,
         shortlets_id,
+        user_id,
       ]
     );
     return successResMsg(res, 201, {
