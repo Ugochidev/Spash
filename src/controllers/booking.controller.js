@@ -26,7 +26,7 @@ const bookShortlets = async (req, res, next) => {
     log;
     // booking
     const newbooking = await db.query(
-      "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id,) VALUES ($1, $2, $3, $4, $5, $6, $7, $8,) RETURNING *",
+      "INSERT INTO booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id,) VALUES ($1, $2, $3, $4, $5, $6, $7, $8,) RETURNING *",
       [
         reservation,
         time,
