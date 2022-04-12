@@ -15,14 +15,11 @@ const adminRouter = require("./routes/admin.route");
 const bookingRouter = require("./routes/booking.route");
 const shortletsRouter = require("./routes/shortlets.route");
 
-// google home page
-app.get("/auth", (req, res) => {
-  res.render("home", { user: req.user });
-});
 // home page
 app.get("/", (req, res) => {
-  res.send("hello world");
+  res.render("home", { user: req.user });
 });
+
 // set view engine
 app.set("view engine", "ejs");
 
