@@ -23,7 +23,7 @@ const bookShortlets = async (req, res, next) => {
     await validatebooking.validateAsync(req.body);
 
     let totalAmount = noOfRooms * noOfNights * amountPerDay;
-    log
+    log;
     // booking
     const newbooking = await db.query(
       "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id,) VALUES ($1, $2, $3, $4, $5, $6, $7, $8,) RETURNING *",
@@ -43,8 +43,7 @@ const bookShortlets = async (req, res, next) => {
       newbooking: newbooking.rows[0],
     });
   } catch (error) {
-    console.log(error)
-    return errorResMsg(res, 500, { message: error });
+    return errorResMsg(res, 500, { message: error.message });
   }
 };
 
