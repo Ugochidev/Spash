@@ -234,7 +234,10 @@ const updatePassword = async (req, res, next) => {
     }
 
     if (newPassword !== confirmPassword) {
-      return next(new AppError("Password do not match.", 400));
+      // return next(new AppError("Password do not match.", 400));
+      return res.status(400).json({
+        message: "Password do not match.",
+      });
     }
 
     const hashPassword = await bcrypt.hash(confirmPassword, 10);
