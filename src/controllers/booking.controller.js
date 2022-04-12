@@ -44,7 +44,8 @@ const bookShortlets = async (req, res, next) => {
       newbooking: newbooking.rows[0],
     });
   } catch (error) {
-    return errorResMsg(res, 500, { message: error.message });
+    console.log(error)
+    return errorResMsg(res, 500, { message: error });
   }
 };
 
