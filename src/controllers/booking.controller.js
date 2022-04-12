@@ -23,7 +23,8 @@ const bookShortlets = async (req, res, next) => {
     // validating reg.body with joi
     await validatebooking.validateAsync(req.body);
 
-    let totalAmount = noOfRooms * noOfNights * amountPerDay;
+    let totalAmount = (noOfRooms * noOfNights) * amountPerDay;
+    console.log(totalAmount)
     // booking
     const newbooking = await db.query(
       "INSERT INTO Booking (reservation, time, amountPerDay, noOfNights,noOfRooms,totalAmount, date, shortlets_id, userEmail) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *",
