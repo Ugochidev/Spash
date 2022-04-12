@@ -9,7 +9,6 @@ class Booking {
     this.date = date;
     this.noOfRooms = noOfRooms;
     this.shortlets_id = shortlets_id;
-    this.userEmail = userEmail;
 }
 }
 module.exports = Booking;
