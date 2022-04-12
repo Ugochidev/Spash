@@ -44,20 +44,21 @@ const uploadShortlets = async (req, res, next) => {
 //   fetch all available shortlets
 
 const fetchAllShortlets = async (req, res, next) => {
-  try { 
-    const {page} = req.query
+  try {
+    const { page } = req.query;
     // pagination
     const allShortlets = await db.query(
-      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET" + page + " - 1) * 10"
+      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET " + (page - 1) * 10
     );
-    if(
-      allShortlets.rows[0]== null ||
+    if (
+      allShortlets.rows[0] == null ||
       !allShortlets.rows[0] ||
-      allShortlets.rows[0]== []
-    ){
+      allShortlets.rows[0] == []
+    ) {
+      S;
       returnres.status(404).json({
-        message:"page not found"
-      })
+        message: "page not found",
+      });
     }
     const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
