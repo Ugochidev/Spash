@@ -194,8 +194,8 @@ const forgetPassword = async (req, res, next) => {
     await db.execute(
     //   "UPDATE admin SET password = password WHERE password = password"
     // );
-    "UPDATE admin SET password= $1 WHERE id = $2",
-      [true, id]
+    "UPDATE admin SET password = ? WHERE password = ?",
+      [{password : newPassword}]
     );
     return successResMsg(res, 200, {
       message: `Password has been updated successfully.`,
