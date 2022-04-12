@@ -78,13 +78,13 @@ const countShortlets = async (req, res, next) => {
 const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.query;
-    // const apartmentByState = await db.query(
-    //   "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
-    // );
     const apartmentByState = await db.query(
-      "SELECT * FROM shortlets WHERE state = $1",
-      [state]
+      "SELECT * , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
     );
+    // const apartmentByState = await db.query(
+    //   "SELECT * FROM shortlets WHERE state = $1",
+    //   [state]
+    // );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
       apartmentByState: apartmentByState.rows[0],
