@@ -84,7 +84,7 @@ const verifyEmailAddress = async (req, res, next) => {
     }
 
     const verify = await db.execute(
-      "UPDATE admin SET isVerified = true WHERE isVerified = ?"
+      "UPDATE admin SET isVerified = true WHERE isVerified = false"
     );
     return successResMsg(res, 201, { message: "Admin verified successfully" });
   } catch (error) {

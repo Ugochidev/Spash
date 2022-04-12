@@ -48,7 +48,7 @@ const fetchAllShortlets = async (req, res, next) => {
   try {
     // pagination
     const allShortlets = await db.query(
-      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET (1 - 1) * 10"
+      "SELECT * FROM Shortlets Order By id LIMIT 10 OFFSET (2 - 1) * 10"
     );
     const count = await db.query("SELECT COUNT(*)FROM shortlets");
     return successResMsg(res, 200, {
@@ -87,7 +87,7 @@ const fetchApartment = async (req, res, next) => {
     // );
     return successResMsg(res, 200, {
       message: "fetched apartment by State sucessfully",
-      apartmentByState: apartmentByState,
+      apartmentByState: apartmentByState.rows,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
