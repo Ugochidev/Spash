@@ -79,7 +79,7 @@ const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.query;
     const apartmentByState = await db.query(
-      "SELECT * , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
+      "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
     );
     // const apartmentByState = await db.query(
     //   "SELECT * FROM shortlets WHERE state = $1",
