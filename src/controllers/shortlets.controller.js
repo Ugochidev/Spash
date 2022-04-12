@@ -29,13 +29,13 @@ const uploadShortlets = async (req, res, next) => {
     // validating reg.body with joi
     await validateshortlets.validateAsync(req.body);
     pictures = images;
-    const spash = await db.query(
+    const [spash] = await db.query(
       "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6)",
       [apartmentName, state, numberOfRooms, address, amountPerNight, images]
     );
     return successResMsg(res, 201, {
       message: "Shortlets  created",
-      spash,
+      spash : spash,
       images: images,
     });
   } catch (error) {
