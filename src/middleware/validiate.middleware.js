@@ -67,6 +67,7 @@ const validatebooking = Joi.object({
   noOfRooms: Joi.string().max(100).required(),
   totalAmount: Joi.string().max(13),
   shortlets_id: Joi.string().max(13),
+  userID: Joi.string().max(13),
   date: Joi.string().max(13).required(),
 });
 module.exports = {
