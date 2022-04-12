@@ -35,7 +35,7 @@ const uploadShortlets = async (req, res, next) => {
     );
     return successResMsg(res, 201, {
       message: "Shortlets  created",
-      spash : spash,
+      spash,
       images: images,
     });
   } catch (error) {
