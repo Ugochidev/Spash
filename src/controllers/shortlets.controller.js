@@ -30,7 +30,7 @@ const uploadShortlets = async (req, res, next) => {
     pictures = images;
     await db.query(
       "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6)",
-      [apartmentName, state, numberOfRooms, address, amountPerNight, images]
+      [apartmentName, state.toLowerCase(), numberOfRooms, address, amountPerNight, images]
     );
     return successResMsg(res, 201, {
       message: "Shortlets  created",
@@ -87,9 +87,7 @@ const countShortlets = async (req, res, next) => {
 const fetchApartment = async (req, res, next) => {
   try {
     const { state } = req.query;
-    // const apartmentByState = await db.query(
-    //   "SELECT state , COUNT(*)FROM shortlets GROUP BY state HAVING (COUNT(*) > 1);"
-    // );
+    
     const apartmentByState = await db.query(
       "SELECT * FROM shortlets WHERE state = $1",
       [state]
