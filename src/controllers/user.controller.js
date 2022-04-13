@@ -153,7 +153,7 @@ const forgetPasswordLink = async (req, res, next) => {
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
-    await jwt.verify(token, secret_key);
+    const decodedToken =await jwt.verify(token, secret_key);
 
     let mailOptions = {
       to: email.email,
@@ -162,7 +162,7 @@ const forgetPasswordLink = async (req, res, next) => {
     };
     await sendMail(mailOptions);
     return successResMsg(res, 200, {
-      message: `Hi ${user[0].firstName},reset password.`,
+      message: `Hi ${decodedToken.firstName},reset password.`,
       token,
     });
   } catch (error) {
