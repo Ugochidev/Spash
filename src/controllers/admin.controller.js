@@ -156,7 +156,7 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
-    const decodedToken = await jwt.verify(token, secret_key);
+    await jwt.verify(token, secret_key);
     
     //  sending email with nodemailer
     let mailOptions = {
@@ -167,7 +167,7 @@ const forgetPasswordLinkAdmin = async (req, res, next) => {
     await sendMail(mailOptions);
 
     return successResMsg(res, 200, {
-      message: `Hi ${decodedToken.firstName},reset password.`,
+      message: `Hi ${row[0].firstname},reset password.`,
       token,
     });
   } catch (error) {

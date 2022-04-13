@@ -100,7 +100,7 @@ const loginUser = async (req, res, next) => {
     //  checking email and password match
     if (email && password) {
       const [user] = await db.execute("SELECT * FROM users WHERE email =?", [
-        email,
+      email,
       ]);
       if (user.length === 0) {
         return res.status(400).json({
@@ -153,18 +153,17 @@ const forgetPasswordLink = async (req, res, next) => {
     // getting a secret token
     const secret_key = process.env.SECRET_TOKEN;
     const token = await jwt.sign(data, secret_key, { expiresIn: "1hr" });
-    const decodedToken =await jwt.verify(token, secret_key);
+    await jwt.verify(token, secret_key);
 
     let mailOptions = {
       to: email.email,
       subject: "Reset Password",
-      text: `Hi ${email.firstName}, Reset your password with the link below.${token}`,
+      text: `Hi ${email.firstname}, Reset your password with the link below.${token}`,
     };
     await sendMail(mailOptions);
     return successResMsg(res, 200, {
       message: `Hi ${user[0].firstname},reset password.`,
       token,
-      user,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
