@@ -164,6 +164,7 @@ const forgetPasswordLink = async (req, res, next) => {
     return successResMsg(res, 200, {
       message: `Hi ${decodedToken.firstName},reset password.`,
       token,
+      user,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
