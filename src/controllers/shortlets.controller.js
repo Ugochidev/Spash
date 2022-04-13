@@ -25,7 +25,7 @@ const uploadShortlets = async (req, res, next) => {
 
     const { apartmentName, state, numberOfRooms, address, amountPerNight } =
       req.body;
-    // validating reg.body with joi
+    // validating reg.body with joi.
     await validateshortlets.validateAsync(req.body);
     pictures = images;
     await db.query(
