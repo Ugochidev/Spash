@@ -209,6 +209,10 @@ const resetPassword = async (req, res, next) => {
       req.headers.authorization.split(" ")[1],
       process.env.SECRET_TOKEN
     ).email;
+    
+    if (headerTokenEmail !== loggedUser[0][0].email) {
+    return next(new AppError("Forbidden", 404));
+     }
 
 
     const passwordMatch = await bcrypt.compare(
