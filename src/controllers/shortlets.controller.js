@@ -28,8 +28,8 @@ const uploadShortlets = async (req, res, next) => {
     // validating reg.body with joi.
     await validateshortlets.validateAsync(req.body);
     pictures = images;
-    await db.query(
-      "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6)",
+    const uplaodShortlets = await db.query(
+      "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [
         apartmentName,
         state.toLowerCase(),
@@ -42,7 +42,7 @@ const uploadShortlets = async (req, res, next) => {
     return successResMsg(res, 201, {
       message: "Shortlets  created",
       images: images,
-
+      uplaodShortlets: uplaodShortlets,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
