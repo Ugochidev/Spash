@@ -42,7 +42,7 @@ const uploadShortlets = async (req, res, next) => {
     return successResMsg(res, 201, {
       message: "Shortlets  created",
       images: images,
-      uplaodShortlets: uplaodShortlets,
+      uplaodShortlets: uplaodShortlets.rows[0],
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
