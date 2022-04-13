@@ -29,7 +29,7 @@ const uploadShortlets = async (req, res, next) => {
     await validateshortlets.validateAsync(req.body);
     pictures = images;
     await db.query(
-      "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      "INSERT INTO Shortlets (apartmentName, state, numberOfRooms, address, amountPerNight,  pictures) VALUES ($1, $2, $3, $4, $5, $6)",
       [
         apartmentName,
         state.toLowerCase(),
