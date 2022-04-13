@@ -18,7 +18,7 @@ router.post(
   uploadShortlets
 );
 router.get("/shortlets", fetchAllShortlets);
-router.get("/count/shortlets", countShortlets);
-router.get("/apartment", fetchApartment);
+router.get("/count-shortlets", countShortlets);
+router.get("/apartments", fetchApartment);
 //    exporting modules
 module.exports = router;

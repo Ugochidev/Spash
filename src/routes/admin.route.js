@@ -12,11 +12,11 @@ const {
 } = require("../controllers/admin.controller");
 //  creating  route
 router.post("/admin", createAdmin);
-router.post("/verifyemail/admin", verifyEmailAddress);
-router.post("/login/admin", loginAdmin);
-router.post("/forgetPasswordLink/admin", forgetPasswordLinkAdmin);
-router.post("/forgetPassword/admin", forgetPassword);
-router.post("/updatePassword/admin", authenticate, updatePassword);
+router.post("/auth/verify-email", verifyEmailAddress);
+router.post("/auth/login", loginAdmin);
+router.post("/auth/forgetPasswordLink", forgetPasswordLinkAdmin);
+router.post("/auth/forgetPassword", forgetPassword);
+router.post("/auth/updatePassword", authenticate, updatePassword);
 
 //    exporting modules
 module.exports = router;
