@@ -162,7 +162,7 @@ const forgetPasswordLink = async (req, res, next) => {
     };
     await sendMail(mailOptions);
     return successResMsg(res, 200, {
-      message: `Hi ${decodedToken.firstName},reset password.`,
+      message: `Hi ${user[0].firstname},reset password.`,
       token,
       user,
     });
