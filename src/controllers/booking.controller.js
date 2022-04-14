@@ -67,6 +67,7 @@ const bookingPayment = async (req, res, next) => {
         email: paymentBooking.rows[0].email,
         amount: `${paymentBooking.rows[0].totalamount * 100}`,
       },
+     
     // const { id } = req.headers;
     // const booking = await db.query("SELECT id FROM booking WHERE id = $1"
     //  [id]
@@ -82,9 +83,10 @@ const bookingPayment = async (req, res, next) => {
     //     amount: "8000000",
     //   },
     });
+     console.log(email);
     return res.status(200).json({
       data: data.data.data,
-      bookings: booking.rows,
+      paymentBookings: booking.rows,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
