@@ -52,8 +52,11 @@ const bookShortlets = async (req, res, next) => {
 
 const bookingPayment = async (req, res, next) => {
   try {
-    const { id } = req.headers;
-    const booking = await db.query("SELECT id FROM booking");
+     const { id } = req.headers;
+    const paymentBooking = await db.query(
+      "SELECT * FROM booking WHERE id = $1",
+      [id]
+    );
     const data = await axios({
       url: "https://api.paystack.co/transaction/initialize",
       method: "post",
@@ -61,9 +64,23 @@ const bookingPayment = async (req, res, next) => {
         Authorization: `Bearer ${process.env.paystack_Secret}`,
       },
       data: {
-        email: "ugochukwuchioma16@gmail.com",
-        amount: "8000000",
+        email: paymentBooking.rows[0].email,
+        amount: `${paymentBooking.rows[0].totalamount * 100}`,
       },
+    // const { id } = req.headers;
+    // const booking = await db.query("SELECT id FROM booking WHERE id = $1"
+    //  [id]
+    // );
+    // const data = await axios({
+    //   url: "https://api.paystack.co/transaction/initialize",
+    //   method: "post",
+    //   headers: {
+    //     Authorization: `Bearer ${process.env.paystack_Secret}`,
+    //   },
+    //   data: {
+    //     email: "ugochukwuchioma16@gmail.com",
+    //     amount: "8000000",
+    //   },
     });
     return res.status(200).json({
       data: data.data.data,
