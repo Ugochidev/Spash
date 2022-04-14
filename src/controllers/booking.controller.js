@@ -63,7 +63,7 @@ const bookingPayment = async (req, res, next) => {
       },
       data: {
         email: "ugochukwuchioma16@gmail.com",
-        amount: "8000000",
+        amount: "5400000",
       },
     });
     return res.status(200).json({
@@ -86,7 +86,7 @@ const paymentVerification = async (req, res, next) => {
       },
       data: {
         email: "ugochukwuchioma16@gmail.com",
-        amount: "8000000",
+        amount: "5400000",
       },
     });
     return res.status(200).json({
