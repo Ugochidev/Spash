@@ -83,10 +83,10 @@ const bookingPayment = async (req, res, next) => {
     //     amount: "8000000",
     //   },
     });
-     console.log(email);
     return res.status(200).json({
       data: data.data.data,
       paymentBookings: booking.rows,
+      email: email,
     });
   } catch (error) {
     return errorResMsg(res, 500, { message: error.message });
