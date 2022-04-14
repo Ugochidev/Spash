@@ -19,8 +19,8 @@ router.post("/user", createUser);
 router.post("/auth/verify-email/user", verifyEmail);
 router.post("/auth/login/user", loginUser);
 router.post("/auth/forgetPasswordLink/user", forgetPasswordLink);
-router.post("/auth/forgetpassword/user", changePassword);
-router.post("/auth/updatepassword/user", authenticate, resetPassword);
+router.patch("/auth/forgetpassword/user", changePassword);
+router.patch("/auth/updatepassword/user", authenticate, resetPassword);
 
 //    exporting modules
 module.exports = router;
